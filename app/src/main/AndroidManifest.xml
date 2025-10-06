@@ -22,12 +22,12 @@
         android:label="@string/app_name"
         android:roundIcon="@mipmap/ic_launcher_round"
         android:supportsRtl="true"
-        android:theme="@style/Theme.SafeSms">
+        android:theme="@style/Theme.KidsSMS">
         <activity
             android:name=".MainActivityCompose"
             android:exported="true"
             android:label="@string/app_name"
-            android:theme="@style/Theme.SafeSms">
+            android:theme="@style/Theme.KidsSMS">
             <intent-filter>
                 <action android:name="android.intent.action.MAIN" />
 
@@ -94,7 +94,7 @@
             android:name=".receiver.QuickReplyReceiver"
             android:exported="false">
             <intent-filter>
-                <action android:name="ssk.safesms.ACTION_REPLY" />
+                <action android:name="ssk.kidssms.ACTION_REPLY" />
             </intent-filter>
         </receiver>
     </application>

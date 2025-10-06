@@ -1,4 +1,4 @@
-package ssk.safesms
+package ssk.kidssms
 
 import android.Manifest
 import android.app.role.RoleManager
@@ -28,12 +28,12 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
-import ssk.safesms.notification.SmsNotificationManager
-import ssk.safesms.ui.conversation.ConversationViewModel
-import ssk.safesms.ui.home.HomeViewModel
-import ssk.safesms.ui.screens.ConversationScreen
-import ssk.safesms.ui.screens.SmsListScreen
-import ssk.safesms.ui.theme.SafeSmsTheme
+import ssk.kidssms.notification.SmsNotificationManager
+import ssk.kidssms.ui.conversation.ConversationViewModel
+import ssk.kidssms.ui.home.HomeViewModel
+import ssk.kidssms.ui.screens.ConversationScreen
+import ssk.kidssms.ui.screens.SmsListScreen
+import ssk.kidssms.ui.theme.KidsSMSTheme
 
 class MainActivityCompose : ComponentActivity() {
 
@@ -59,7 +59,7 @@ class MainActivityCompose : ComponentActivity() {
         super.onCreate(savedInstanceState)
 
         setContent {
-            SafeSmsTheme {
+            KidsSMSTheme {
                 Surface(
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background

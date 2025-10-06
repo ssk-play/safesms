@@ -1,4 +1,4 @@
-package ssk.safesms.ui.home
+package ssk.kidssms.ui.home
 
 import android.app.Application
 import androidx.lifecycle.AndroidViewModel
@@ -7,8 +7,8 @@ import androidx.lifecycle.MutableLiveData
 import androidx.lifecycle.viewModelScope
 import kotlinx.coroutines.Dispatchers
 import kotlinx.coroutines.launch
-import ssk.safesms.data.model.SmsThread
-import ssk.safesms.data.repository.SmsRepository
+import ssk.kidssms.data.model.SmsThread
+import ssk.kidssms.data.repository.SmsRepository
 
 class HomeViewModel(application: Application) : AndroidViewModel(application) {
 

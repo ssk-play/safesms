@@ -1,4 +1,4 @@
-package ssk.safesms.ui.theme
+package ssk.kidssms.ui.theme
 
 import android.app.Activity
 import androidx.compose.foundation.isSystemInDarkTheme
@@ -24,7 +24,7 @@ private val LightColorScheme = lightColorScheme(
 )
 
 @Composable
-fun SafeSmsTheme(
+fun KidsSMSTheme(
     darkTheme: Boolean = isSystemInDarkTheme(),
     content: @Composable () -> Unit
 ) {

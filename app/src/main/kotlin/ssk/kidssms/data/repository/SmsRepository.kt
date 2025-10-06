@@ -1,11 +1,11 @@
-package ssk.safesms.data.repository
+package ssk.kidssms.data.repository
 
 import android.content.Context
 import android.net.Uri
 import android.provider.Telephony
 import android.telephony.SmsManager
-import ssk.safesms.data.model.SmsMessage
-import ssk.safesms.data.model.SmsThread
+import ssk.kidssms.data.model.SmsMessage
+import ssk.kidssms.data.model.SmsThread
 
 class SmsRepository(private val context: Context) {
 

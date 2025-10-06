@@ -1,4 +1,4 @@
-package ssk.safesms.receiver
+package ssk.kidssms.receiver
 
 import android.content.BroadcastReceiver
 import android.content.ContentValues
@@ -7,7 +7,7 @@ import android.content.Intent
 import android.provider.Telephony
 import android.util.Log
 import android.widget.Toast
-import ssk.safesms.notification.SmsNotificationManager
+import ssk.kidssms.notification.SmsNotificationManager
 
 /**
  * SMS receiving BroadcastReceiver (Default SMS app only)

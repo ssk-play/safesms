@@ -1,4 +1,4 @@
-package ssk.safesms.data.model
+package ssk.kidssms.data.model
 
 data class SmsThread(
     val threadId: Long,

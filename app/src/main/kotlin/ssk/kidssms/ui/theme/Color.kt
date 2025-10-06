@@ -1,4 +1,4 @@
-package ssk.safesms.ui.theme
+package ssk.kidssms.ui.theme
 
 import androidx.compose.ui.graphics.Color
 

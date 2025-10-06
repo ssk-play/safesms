@@ -5,11 +5,11 @@ plugins {
 }
 
 android {
-    namespace = "ssk.safesms"
+    namespace = "ssk.kidssms"
     compileSdk = 36
 
     defaultConfig {
-        applicationId = "ssk.safesms"
+        applicationId = "ssk.kidssms"
         minSdk = 26
         targetSdk = 36
         versionCode = 1

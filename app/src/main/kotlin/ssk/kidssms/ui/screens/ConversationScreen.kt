@@ -1,4 +1,4 @@
-package ssk.safesms.ui.screens
+package ssk.kidssms.ui.screens
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -22,10 +22,10 @@ import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
-import ssk.safesms.data.model.SmsMessage
-import ssk.safesms.notification.SmsNotificationManager
-import ssk.safesms.receiver.SmsReceiver
-import ssk.safesms.ui.conversation.ConversationViewModel
+import ssk.kidssms.data.model.SmsMessage
+import ssk.kidssms.notification.SmsNotificationManager
+import ssk.kidssms.receiver.SmsReceiver
+import ssk.kidssms.ui.conversation.ConversationViewModel
 import java.text.SimpleDateFormat
 import java.util.*
 

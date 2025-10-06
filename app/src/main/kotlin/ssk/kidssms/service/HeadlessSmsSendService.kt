@@ -1,4 +1,4 @@
-package ssk.safesms.service
+package ssk.kidssms.service
 
 import android.app.Service
 import android.content.Intent

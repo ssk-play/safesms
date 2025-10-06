@@ -1,4 +1,4 @@
-package ssk.safesms.receiver
+package ssk.kidssms.receiver
 
 import android.content.BroadcastReceiver
 import android.content.Context
@@ -7,7 +7,7 @@ import android.telephony.SmsManager
 import android.util.Log
 import android.widget.Toast
 import androidx.core.app.RemoteInput
-import ssk.safesms.notification.SmsNotificationManager
+import ssk.kidssms.notification.SmsNotificationManager
 
 /**
  * Handles Quick Reply from Notification

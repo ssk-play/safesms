@@ -1,4 +1,4 @@
-package ssk.safesms.data.model
+package ssk.kidssms.data.model
 
 data class SmsMessage(
     val id: Long,

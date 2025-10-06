@@ -1,4 +1,4 @@
-package ssk.safesms.ui
+package ssk.kidssms.ui
 
 import android.content.Intent
 import android.os.Bundle
@@ -13,7 +13,7 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
-import ssk.safesms.ui.theme.SafeSmsTheme
+import ssk.kidssms.ui.theme.KidsSMSTheme
 import android.telephony.SmsManager
 import android.util.Log
 import android.widget.Toast
@@ -46,7 +46,7 @@ class ComposeSmsActivity : ComponentActivity() {
         Log.d("ComposeSmsActivity", "Recipient: $recipientAddress, Message: $initialMessage")
 
         setContent {
-            SafeSmsTheme {
+            KidsSMSTheme {
                 ComposeSmsScreen(
                     initialRecipient = recipientAddress,
                     initialMessage = initialMessage,

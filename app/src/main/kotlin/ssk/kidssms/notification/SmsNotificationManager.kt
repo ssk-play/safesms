@@ -1,4 +1,4 @@
-package ssk.safesms.notification
+package ssk.kidssms.notification
 
 import android.app.Notification
 import android.app.NotificationChannel
@@ -11,9 +11,9 @@ import androidx.core.app.NotificationCompat
 import androidx.core.app.Person
 import androidx.core.app.RemoteInput
 import androidx.core.graphics.drawable.IconCompat
-import ssk.safesms.MainActivityCompose
-import ssk.safesms.R
-import ssk.safesms.receiver.QuickReplyReceiver
+import ssk.kidssms.MainActivityCompose
+import ssk.kidssms.R
+import ssk.kidssms.receiver.QuickReplyReceiver
 
 /**
  * Advanced SMS Notification Manager
@@ -32,7 +32,7 @@ class SmsNotificationManager(private val context: Context) {
         private const val CHANNEL_DESCRIPTION = "New SMS message notifications"
 
         const val KEY_TEXT_REPLY = "key_text_reply"
-        const val ACTION_REPLY = "ssk.safesms.ACTION_REPLY"
+        const val ACTION_REPLY = "ssk.kidssms.ACTION_REPLY"
         const val EXTRA_ADDRESS = "extra_address"
         const val EXTRA_THREAD_ID = "extra_thread_id"
 
