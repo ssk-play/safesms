@@ -15,10 +15,13 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.text.font.FontWeight
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -228,51 +231,6 @@ fun SafeSmsApp(
         }
     }
 
-    // 기본 SMS 앱 설정 다이얼로그
-    if (showDefaultSmsDialog) {
-        AlertDialog(
-            onDismissRequest = {
-                showDefaultSmsDialog = false
-            },
-            title = { Text("기본 SMS 앱 설정") },
-            text = {
-                Column {
-                    Text("SafeSms를 기본 SMS 앱으로 설정하시겠습니까?")
-                    Spacer(modifier = Modifier.height(8.dp))
-                    Text(
-                        text = "기본 SMS 앱으로 설정하면 모든 SMS를 이 앱에서 받을 수 있습니다.",
-                        style = MaterialTheme.typography.bodyMedium
-                    )
-                }
-            },
-            dismissButton = {
-                Row {
-                    TextButton(onClick = {
-                        showDefaultSmsDialog = false
-                    }) {
-                        Text("나중에")
-                    }
-                    TextButton(onClick = {
-                        android.util.Log.d("SafeSmsApp", "User clicked 직접 설정 button")
-                        showDefaultSmsDialog = false
-                        onOpenSystemSettings()
-                    }) {
-                        Text("직접 설정")
-                    }
-                }
-            },
-            confirmButton = {
-                TextButton(onClick = {
-                    android.util.Log.d("SafeSmsApp", "User clicked 설정 button")
-                    showDefaultSmsDialog = false
-                    onRequestDefaultSmsApp()
-                }) {
-                    Text("설정")
-                }
-            }
-        )
-    }
-
     // 권한이 허용될 때까지 로딩 표시
     if (!permissionsGranted) {
         Box(
@@ -288,19 +246,92 @@ fun SafeSmsApp(
         return
     }
 
-    NavHost(
-        navController = navController,
-        startDestination = "sms_list"
-    ) {
-        composable("sms_list") {
-            val viewModel: HomeViewModel = viewModel()
-            SmsListScreen(
-                viewModel = viewModel,
-                onThreadClick = { thread ->
-                    navController.navigate("conversation/${thread.threadId}/${thread.address}")
+    Column(modifier = Modifier.fillMaxSize()) {
+        // 기본 SMS 앱 설정 배너 (여기에 렌더링)
+        if (showDefaultSmsDialog) {
+            Card(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                colors = CardDefaults.cardColors(
+                    containerColor = MaterialTheme.colorScheme.primaryContainer
+                )
+            ) {
+                Column(
+                    modifier = Modifier
+                        .fillMaxWidth()
+                        .padding(16.dp)
+                ) {
+                    Row(
+                        modifier = Modifier.fillMaxWidth(),
+                        horizontalArrangement = Arrangement.SpaceBetween,
+                        verticalAlignment = Alignment.CenterVertically
+                    ) {
+                        Column(modifier = Modifier.weight(1f)) {
+                            Text(
+                                text = "기본 SMS 앱으로 설정하세요",
+                                style = MaterialTheme.typography.titleMedium,
+                                fontWeight = FontWeight.Bold,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                            Spacer(modifier = Modifier.height(4.dp))
+                            Text(
+                                text = "모든 SMS를 SafeSms에서 받을 수 있습니다",
+                                style = MaterialTheme.typography.bodyMedium,
+                                color = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                        IconButton(onClick = {
+                            showDefaultSmsDialog = false
+                        }) {
+                            Icon(
+                                imageVector = Icons.Default.Close,
+                                contentDescription = "닫기",
+                                tint = MaterialTheme.colorScheme.onPrimaryContainer
+                            )
+                        }
+                    }
+                    Spacer(modifier = Modifier.height(12.dp))
+                    Row(
+                        horizontalArrangement = Arrangement.spacedBy(8.dp)
+                    ) {
+                        Button(
+                            onClick = {
+                                android.util.Log.d("SafeSmsApp", "User clicked 설정 button")
+                                onRequestDefaultSmsApp()
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("설정")
+                        }
+                        OutlinedButton(
+                            onClick = {
+                                android.util.Log.d("SafeSmsApp", "User clicked 직접 설정 button")
+                                onOpenSystemSettings()
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("직접 설정")
+                        }
+                    }
                 }
-            )
+            }
         }
+
+        NavHost(
+            navController = navController,
+            startDestination = "sms_list",
+            modifier = Modifier.fillMaxSize()
+        ) {
+            composable("sms_list") {
+                val viewModel: HomeViewModel = viewModel()
+                SmsListScreen(
+                    viewModel = viewModel,
+                    onThreadClick = { thread ->
+                        navController.navigate("conversation/${thread.threadId}/${thread.address}")
+                    }
+                )
+            }
 
         composable(
             route = "conversation/{threadId}/{address}",
@@ -320,5 +351,6 @@ fun SafeSmsApp(
                 onBackClick = { navController.popBackStack() }
             )
         }
+    }
     }
 }
