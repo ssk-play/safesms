@@ -1,78 +1,8 @@
-# Screenshot Guidelines for Google Play Store
+# Screenshots
 
-## Requirements
-- **Minimum**: 2 screenshots
-- **Recommended**: 4-8 screenshots
-- **Format**: PNG or JPEG (PNG recommended)
-- **Dimensions**: Between 320px and 3840px for any side
-- **Aspect ratio**: Must be between 16:9 and 9:16
-- **Recommended size**: 1080x1920 (portrait) or 1920x1080 (landscape)
+Minimum 2, recommended 4 screenshots showing:
 
-## Recommended Screenshots
-
-### Screenshot 1: SMS List View
-**Title**: "All Your Conversations in One Place"
-- Show the main SMS list screen
-- Display multiple conversation threads
-- Show recent messages with timestamps
-- Highlight clean, organized interface
-
-### Screenshot 2: Conversation View with Blocked Links
-**Title**: "Links Automatically Blocked - No Distractions"
-- Show an active conversation containing URLs
-- Demonstrate that links appear as plain text (not clickable/highlighted)
-- Display sent and received messages
-- Show message bubbles with different colors
-- Optional: Add annotation showing "Links disabled ✓" or crossed-out link icon
-- Show the message input field at bottom
-
-### Screenshot 3: Notification
-**Title**: "Smart Notifications with Quick Reply"
-- Capture a notification showing:
-  - Message preview
-  - Quick Reply action
-  - Sender information
-- Can be a mockup showing the notification expanded
-
-### Screenshot 4: Compose New Message
-**Title**: "Send Messages Easily"
-- Show the compose message screen
-- Display recipient field
-- Show message composition area
-- Highlight send button
-
-### Screenshot 5: Dark Theme (Optional)
-**Title**: "Looks Great in Dark Mode"
-- Same view as Screenshot 1 or 2 but in dark theme
-- Show Material 3 color scheme
-
-## Design Tips
-- Use actual app screenshots (no mockups)
-- Add minimal text overlay to highlight features
-- Maintain consistency in device frame/size
-- Show real or realistic message content
-- Avoid showing personal information
-- Keep UI clean and uncluttered
-
-## Text Overlay Suggestions
-- Use large, readable fonts
-- Limit to 5-7 words per screenshot
-- Place text in empty areas (top or bottom)
-- Use contrasting colors
-- Add subtle backgrounds for readability
-
-## Tools
-- Android Studio Device Explorer (capture screenshots)
-- Figma/Photoshop (add device frames and text)
-- Google's Device Art Generator
-- Previewed app (Mac)
-- Screenshot Mockup Generator (online tools)
-
-## Capture Instructions
-1. Run app on emulator or device
-2. Navigate to desired screen
-3. Use Android Studio: View → Tool Windows → Device Explorer → Screen Capture
-4. Or use adb: `adb shell screencap -p /sdcard/screen.png`
-5. Edit and add device frame if desired
-6. Add text overlay highlighting key feature
-7. Export as PNG at high quality
+1. SMS list view
+2. Conversation with URLs (shown as plain text, not clickable)
+3. Notification with Quick Reply
+4. Message compose screen
