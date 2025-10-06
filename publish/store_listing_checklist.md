@@ -26,7 +26,7 @@
 - [ ] Pricing (free or paid)
 
 ## Content Rating Questionnaire
-Since SafeSms is an SMS app:
+Since SafeSms is a child-focused SMS app:
 - Violence: None
 - Sexual content: None
 - Profanity: None
@@ -36,8 +36,9 @@ Since SafeSms is an SMS app:
 - User interaction: Yes (messaging)
 - Personal information: Yes (contacts, messages)
 - Location: No
+- Designed for children: Yes (with link blocking safety feature)
 
-Expected rating: **Everyone** or **Teen** (due to user-generated content)
+Expected rating: **Everyone** (designed specifically for children with safety features)
 
 ## Privacy Policy Requirements
 SafeSms needs a privacy policy because it:
@@ -55,16 +56,18 @@ SafeSms needs a privacy policy because it:
 7. Contact information
 
 ## SEO Keywords Suggestions
-- SMS app
-- Text messaging
-- Secure messaging
-- Private SMS
-- SMS manager
-- Text message app
-- Messaging app
-- Default SMS
-- SMS notifications
-- Quick reply
+- Kids SMS app
+- Safe messaging for kids
+- Link blocking SMS
+- Parental control texting
+- Child-safe messaging
+- Distraction-free SMS
+- Kids first phone app
+- Family messaging
+- No clickable links
+- Children SMS app
+- Safe texting for kids
+- Parental control SMS
 
 ## Pre-Launch Checklist
 - [ ] Test on multiple devices
@@ -98,12 +101,13 @@ Consider adding translations for:
 Version 1.0.0 - Initial Release
 
 What's New:
-• Send and receive SMS messages
+• Link blocking - all URLs disabled for child safety
+• Send and receive SMS messages safely
 • Beautiful Material 3 design
 • Smart notifications with Quick Reply
-• Threaded conversation view
-• Fast and lightweight
-• Privacy-focused with no ads
+• Perfect for kids' first phone
+• No ads, no tracking, no distractions
+• Privacy-focused and parent-approved
 
-We'd love to hear your feedback! Please rate and review.
+Safe messaging for your children starts here!
 ```

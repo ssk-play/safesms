@@ -1,50 +1,96 @@
-SafeSms - Your Secure SMS Messaging Solution
+SafeSms - Safe Messaging for Kids
 
-SafeSms is a modern, lightweight SMS messaging application designed with privacy and simplicity in mind. Built with Material 3 design principles, SafeSms provides a clean and intuitive interface for all your text messaging needs.
+Finally, an SMS app designed for children! SafeSms blocks all links in messages, keeping kids focused on communication without the distraction of websites, videos, or other apps. Perfect for parents who want to give their children texting capabilities without the risks.
 
-KEY FEATURES:
+🛡️ LINK BLOCKING - THE KEY FEATURE
 
-📱 Full SMS Functionality
-• Send and receive text messages seamlessly
+• ALL links are automatically disabled in messages
+• No clickable URLs, phone numbers, or addresses
+• Kids can't accidentally (or intentionally) browse the web
+• Pure text communication only - no distractions
+• Parents can trust their children with text messaging
+
+📱 SAFE SMS FUNCTIONALITY
+
+• Send and receive text messages normally
 • Threaded conversation view for easy reading
 • Real-time message delivery and reception
 • Support for long messages (SMS concatenation)
+• All standard SMS features work perfectly
 
-🔔 Smart Notifications
-• Intelligent notification system that respects your context
+👨‍👩‍👧‍👦 PERFECT FOR PARENTS
+
+• Give kids their first phone with confidence
+• Allow texting with family and friends safely
+• No worry about inappropriate content access
+• Keep children focused on homework and conversations
+• Prevent endless browsing and app switching
+• Peace of mind for parents
+
+🔔 SMART NOTIFICATIONS
+
+• Receive message notifications instantly
 • Quick Reply directly from notifications
-• No interruptions when actively viewing conversations
 • Customizable notification channels
+• No interruptions when actively viewing conversations
 
-💬 Modern Design
-• Clean Material 3 design language
+💬 CLEAN & SIMPLE DESIGN
+
+• Easy-to-use interface for all ages
+• Material 3 design language
 • Intuitive conversation interface
 • Message bubbles with timestamps
-• Responsive and fluid animations
+• Child-friendly and straightforward
 
-🔒 Privacy & Security
+🔒 PRIVACY & SECURITY
+
 • No ads, no tracking, no data collection
-• Your messages stay on your device
+• Your messages stay on your device only
 • Minimal permissions required
 • Open source and transparent
+• No third-party integrations
 
-⚡ Performance
-• Lightweight and fast
+⚡ LIGHTWEIGHT & FAST
+
 • Battery efficient
 • Low memory footprint
-• Optimized for modern Android devices
+• Fast message delivery
+• Works on older devices (Android 8.0+)
 
-🎯 User-Friendly Features
-• Easy contact management
-• Search through conversations
-• Automatic refresh on app resume
-• Share messages from other apps
+WHY SAFESMS?
+
+Traditional SMS apps make every phone number, URL, and address clickable - turning a simple message into a gateway to endless distractions. SafeSms eliminates this problem completely. Your child can stay in touch with family and friends through text messages without the ability to click links that lead to:
+
+• Web browsers and endless surfing
+• YouTube and video apps
+• Social media platforms
+• Unknown websites
+• Inappropriate content
+• Time-wasting distractions
+
+USE CASES:
+
+✓ First phone for elementary/middle school students
+✓ Limited phone for focused study time
+✓ Safe communication for young teens
+✓ Distraction-free messaging for homework hours
+✓ Parental control without complex software
+✓ Simple texting for grandparents and kids
 
 REQUIREMENTS:
+
 • Android 8.0 (API 26) or higher
-• Must be set as default SMS app to access all features
+• Must be set as default SMS app to use
 • SMS permissions required for core functionality
 
-SafeSms is perfect for users who want a straightforward, reliable SMS app without unnecessary bloat or privacy concerns. Whether you're sending a quick text or managing multiple conversations, SafeSms provides the tools you need with a interface you'll love.
+WHO IS THIS FOR?
 
-Download SafeSms today and experience messaging the way it should be - simple, secure, and efficient.
+• Parents giving their child their first phone
+• Families who want screen-time boundaries
+• Schools allowing basic phones for emergency contact
+• Anyone seeking distraction-free messaging
+• Users who want pure text communication
+
+SafeSms gives you peace of mind. Your kids can text family, coordinate with friends, and stay connected - all without the rabbit hole of links and distractions. It's messaging the way it should be for children: simple, safe, and focused.
+
+Download SafeSms today and give your child the gift of safe, distraction-free communication!

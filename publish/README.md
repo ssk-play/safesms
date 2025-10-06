@@ -2,12 +2,16 @@
 
 This folder contains all assets and content needed for publishing SafeSms to the Google Play Store.
 
+## App Concept
+
+SafeSms is a **child-safe SMS app** with a unique feature: **all links are disabled**. No clickable URLs, phone numbers, or addresses. This keeps children focused on communication without distractions from web browsers, videos, or other apps.
+
 ## Contents
 
 ### Text Content (Ready to Use)
-- `app_name.txt` - Official app name for Play Store listing
-- `short_description.txt` - 80-character tagline for store listing
-- `long_description.txt` - Full app description with features and benefits
+- `app_name.txt` - Official app name: "SafeSms - Safe Messaging for Kids"
+- `short_description.txt` - 80-character tagline highlighting link blocking
+- `long_description.txt` - Full description emphasizing parental control and safety
 
 ### Design Specifications (Need Creation)
 - `app_icon_specs.md` - Requirements and design concepts for 512x512 app icon
@@ -64,25 +68,28 @@ When creating assets, use these names:
 ## App Store Optimization (ASO)
 
 ### Primary Keywords
-- SMS app
-- Messaging
-- Text messages
-- Secure SMS
+- Kids SMS app
+- Safe messaging for children
+- Link blocking SMS
+- Parental control messaging
+- Distraction-free texting
 
 ### Secondary Keywords
-- Private messaging
-- Quick reply
-- SMS manager
-- Default SMS
+- Child-safe SMS
+- Kids first phone
+- No clickable links
+- Family messaging
+- Screen time control
 
 ### Category
-**Communication**
+**Communication** (consider also: Parenting)
 
 ### Target Audience
-- Users who want a simple, ad-free SMS app
-- Privacy-conscious users
-- Users looking for lightweight messaging solution
-- Android users seeking default SMS app replacement
+- Parents giving children their first phone
+- Families with elementary/middle school students
+- Parents wanting screen time control
+- Schools allowing basic phones
+- Anyone seeking distraction-free messaging
 
 ## Next Steps
 

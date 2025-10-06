@@ -17,12 +17,13 @@
 - Show recent messages with timestamps
 - Highlight clean, organized interface
 
-### Screenshot 2: Conversation View
-**Title**: "Beautiful Messaging Interface"
-- Show an active conversation
+### Screenshot 2: Conversation View with Blocked Links
+**Title**: "Links Automatically Blocked - No Distractions"
+- Show an active conversation containing URLs
+- Demonstrate that links appear as plain text (not clickable/highlighted)
 - Display sent and received messages
 - Show message bubbles with different colors
-- Include timestamp details
+- Optional: Add annotation showing "Links disabled ✓" or crossed-out link icon
 - Show the message input field at bottom
 
 ### Screenshot 3: Notification

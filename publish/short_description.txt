@@ -1,1 +1,1 @@
-A clean, secure SMS messaging app with quick reply and smart notifications
+SMS app with link blocking - safe messaging for children without distractions

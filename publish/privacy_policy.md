@@ -4,7 +4,7 @@
 
 ## Introduction
 
-SafeSms ("we", "our", or "the app") is committed to protecting your privacy. This Privacy Policy explains how SafeSms handles your information when you use our SMS messaging application.
+SafeSms ("we", "our", or "the app") is a child-safe SMS messaging application with link blocking features. We are committed to protecting your family's privacy. This Privacy Policy explains how SafeSms handles your information when you use our SMS messaging application.
 
 ## Information We Collect
 
@@ -69,7 +69,14 @@ SafeSms does not integrate with any third-party services, analytics platforms, o
 
 ## Children's Privacy
 
-SafeSms does not knowingly collect information from children under 13. As a messaging app, it should only be used by individuals old enough to have their own mobile device and phone number.
+SafeSms is specifically designed for children with parental supervision. The app:
+- Does not collect any personal information from children
+- Does not transmit data to external servers
+- Keeps all messages locally on the device
+- Blocks all links to prevent access to external content
+- Requires parental setup as default SMS app
+
+Parents/guardians should supervise the setup and usage of SafeSms. All data remains on the device and under the parent's/guardian's control.
 
 ## Data Deletion
 
@@ -115,7 +122,7 @@ SafeSms is open source software. You can review the source code to verify our pr
 
 ## Summary
 
-**TL;DR**: SafeSms is a privacy-focused SMS app. Your messages stay on your device. We don't collect, store, share, or sell your data. No ads, no tracking, no servers. Uninstall anytime to remove the app.
+**TL;DR**: SafeSms is a child-safe, privacy-focused SMS app with link blocking. Your messages stay on your device. We don't collect, store, share, or sell your data. No ads, no tracking, no servers, no clickable links. Perfect for kids' first phones. Uninstall anytime to remove the app.
 
 ---
 

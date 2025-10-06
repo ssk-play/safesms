@@ -14,9 +14,9 @@
 ┌─────────────────────────────────────────────────────────┐
 │                                                           │
 │  [App Icon]    SafeSms                                   │
-│                Secure Messaging                          │
+│                Safe Messaging for Kids                   │
 │                                                           │
-│  ✓ Private    ✓ Fast    ✓ Simple    ✓ No Ads           │
+│  🛡️ Links Blocked    ✓ Kid-Safe    ✓ No Distractions   │
 │                                                           │
 └─────────────────────────────────────────────────────────┘
 ```
@@ -29,12 +29,12 @@
 ### Elements to Include
 1. **App Icon** (left side, 120x120px)
 2. **App Name**: "SafeSms" in large, bold font
-3. **Tagline**: "Secure Messaging" below app name
+3. **Tagline**: "Safe Messaging for Kids" below app name
 4. **Key Features** (bottom):
-   - Private (with lock icon)
-   - Fast (with lightning icon)
-   - Simple (with checkmark icon)
-   - No Ads (with shield icon)
+   - Links Blocked (with shield icon)
+   - Kid-Safe (with heart/family icon)
+   - No Distractions (with focus/checkmark icon)
+   - Parent-Approved (with thumbs up icon)
 
 ### Typography
 - **App Name**: Sans-serif, Bold, 72pt
@@ -51,9 +51,10 @@
 ## Alternative Concepts
 
 ### Concept 2: Screenshot Showcase
-- Show 3 app screenshots (conversation view, notification, message list)
+- Show 3 app screenshots (conversation view with blocked links, notification, message list)
 - App name in corner
-- "Experience SMS Done Right" tagline
+- "Text Safely. No Distractions." tagline
+- Highlight crossed-out link icon
 
 ### Concept 3: Minimalist
 - Centered app icon (large, 300x300px)

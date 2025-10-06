@@ -8,20 +8,21 @@
 
 ## Design Recommendations
 
-### Concept 1: Shield with Message Bubble
+### Concept 1: Shield with Message Bubble (Recommended)
 - **Background**: Gradient from blue (#2196F3) to teal (#00BCD4)
 - **Icon**: White shield outline with a message bubble inside
-- **Style**: Minimalist, modern, Material Design
+- **Badge**: Small "no link" icon (🚫) or child icon
+- **Style**: Minimalist, modern, Material Design, parent-friendly
 
-### Concept 2: Lock with SMS Symbol
-- **Background**: Solid color background (#1976D2)
-- **Icon**: White lock icon with SMS envelope/bubble
-- **Style**: Clean, security-focused
+### Concept 2: Message Bubble with Blocked Link
+- **Background**: Solid green/blue background (#4CAF50 or #2196F3)
+- **Icon**: Large message bubble with a crossed-out link/chain symbol
+- **Style**: Direct, clear safety message
 
-### Concept 3: Chat Bubble with Check
-- **Background**: Gradient background (primary brand colors)
-- **Icon**: Rounded chat bubble with checkmark
-- **Style**: Friendly, approachable
+### Concept 3: Parent & Child Protection
+- **Background**: Gradient background (safe, warm colors)
+- **Icon**: Parent/child silhouette with message bubble and shield
+- **Style**: Friendly, family-focused, trustworthy
 
 ## Current Icon Location
 The app currently uses the default Android launcher icon at:
