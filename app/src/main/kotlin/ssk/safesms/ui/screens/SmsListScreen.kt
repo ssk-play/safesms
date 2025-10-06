@@ -8,6 +8,8 @@ import androidx.compose.foundation.clickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
+import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -20,6 +22,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.Lifecycle
 import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import ssk.safesms.data.model.SmsThread
 import ssk.safesms.receiver.SmsReceiver
 import ssk.safesms.ui.home.HomeViewModel
@@ -58,23 +61,46 @@ fun SmsListScreen(
     DisposableEffect(context) {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
+                android.util.Log.d("SmsListScreen", "Broadcast received: ${intent?.action}")
                 if (intent?.action == SmsReceiver.ACTION_SMS_RECEIVED) {
+                    android.util.Log.d("SmsListScreen", "Loading threads...")
                     viewModel.loadThreads()
                 }
             }
         }
         val filter = IntentFilter(SmsReceiver.ACTION_SMS_RECEIVED)
-        context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+
+        try {
+            // Android 13 이상에서는 RECEIVER_NOT_EXPORTED 필요
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+            } else {
+                context.registerReceiver(receiver, filter)
+            }
+            android.util.Log.d("SmsListScreen", "Receiver registered successfully")
+        } catch (e: Exception) {
+            android.util.Log.e("SmsListScreen", "Failed to register receiver", e)
+        }
 
         onDispose {
-            context.unregisterReceiver(receiver)
+            try {
+                context.unregisterReceiver(receiver)
+                android.util.Log.d("SmsListScreen", "Receiver unregistered")
+            } catch (e: Exception) {
+                android.util.Log.e("SmsListScreen", "Failed to unregister receiver", e)
+            }
         }
     }
 
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SafeSms") }
+                title = { Text("SafeSms") },
+                actions = {
+                    IconButton(onClick = { viewModel.loadThreads() }) {
+                        Icon(Icons.Default.Refresh, contentDescription = "새로고침")
+                    }
+                }
             )
         }
     ) { paddingValues ->

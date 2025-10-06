@@ -1,5 +1,9 @@
 package ssk.safesms.ui.screens
 
+import android.content.BroadcastReceiver
+import android.content.Context
+import android.content.Intent
+import android.content.IntentFilter
 import androidx.compose.foundation.background
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
@@ -14,9 +18,11 @@ import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
+import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import ssk.safesms.data.model.SmsMessage
+import ssk.safesms.receiver.SmsReceiver
 import ssk.safesms.ui.conversation.ConversationViewModel
 import java.text.SimpleDateFormat
 import java.util.*
@@ -32,6 +38,7 @@ fun ConversationScreen(
     val messages by viewModel.messages.observeAsState(emptyList())
     var messageText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
+    val context = LocalContext.current
 
     LaunchedEffect(threadId) {
         viewModel.loadMessages(threadId)
@@ -40,6 +47,37 @@ fun ConversationScreen(
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
+        }
+    }
+
+    // SMS 수신 감지
+    DisposableEffect(context) {
+        val receiver = object : BroadcastReceiver() {
+            override fun onReceive(context: Context?, intent: Intent?) {
+                if (intent?.action == SmsReceiver.ACTION_SMS_RECEIVED) {
+                    android.util.Log.d("ConversationScreen", "SMS received, reloading messages")
+                    viewModel.loadMessages(threadId)
+                }
+            }
+        }
+        val filter = IntentFilter(SmsReceiver.ACTION_SMS_RECEIVED)
+
+        try {
+            if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
+                context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
+            } else {
+                context.registerReceiver(receiver, filter)
+            }
+        } catch (e: Exception) {
+            android.util.Log.e("ConversationScreen", "Failed to register receiver", e)
+        }
+
+        onDispose {
+            try {
+                context.unregisterReceiver(receiver)
+            } catch (e: Exception) {
+                android.util.Log.e("ConversationScreen", "Failed to unregister receiver", e)
+            }
         }
     }
 
