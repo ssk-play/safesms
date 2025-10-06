@@ -174,6 +174,7 @@ fun SafeSmsApp(
     val navController = rememberNavController()
     var showDefaultSmsDialog by remember { mutableStateOf(false) }
     var permissionsGranted by remember { mutableStateOf(false) }
+    var settingClickCount by remember { mutableStateOf(0) }
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
     // 필요한 권한 목록
@@ -295,21 +296,25 @@ fun SafeSmsApp(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        OutlinedButton(
-                            onClick = {
-                                android.util.Log.d("SafeSmsApp", "User clicked 직접 설정 button")
-                                onOpenSystemSettings()
-                            },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("직접 설정")
+                        // 3회 이상 클릭 시 직접 설정 버튼 표시
+                        if (settingClickCount >= 3) {
+                            OutlinedButton(
+                                onClick = {
+                                    android.util.Log.d("SafeSmsApp", "User clicked 직접 설정 button")
+                                    onOpenSystemSettings()
+                                },
+                                modifier = Modifier.weight(1f)
+                            ) {
+                                Text("직접 설정")
+                            }
                         }
                         Button(
                             onClick = {
-                                android.util.Log.d("SafeSmsApp", "User clicked 설정 button")
+                                settingClickCount++
+                                android.util.Log.d("SafeSmsApp", "User clicked 설정 button (count: $settingClickCount)")
                                 onRequestDefaultSmsApp()
                             },
-                            modifier = Modifier.weight(1f)
+                            modifier = if (settingClickCount >= 3) Modifier.weight(1f) else Modifier.fillMaxWidth()
                         ) {
                             Text("설정")
                         }
