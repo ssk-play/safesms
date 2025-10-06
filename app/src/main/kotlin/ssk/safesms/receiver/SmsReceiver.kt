@@ -12,7 +12,11 @@ class SmsReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("SmsReceiver", "onReceive called with action: ${intent.action}")
 
-        if (intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
+        // SMS_DELIVER: 기본 SMS 앱일 때 수신
+        // SMS_RECEIVED: 기본 SMS 앱이 아닐 때 수신
+        if (intent.action == Telephony.Sms.Intents.SMS_DELIVER_ACTION ||
+            intent.action == Telephony.Sms.Intents.SMS_RECEIVED_ACTION) {
+
             Log.d("SmsReceiver", "SMS received, broadcasting update")
             Toast.makeText(context, "SafeSms: 새 메시지 수신", Toast.LENGTH_SHORT).show()
 

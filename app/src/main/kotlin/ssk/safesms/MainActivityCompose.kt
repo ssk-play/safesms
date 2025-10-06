@@ -1,14 +1,19 @@
 package ssk.safesms
 
 import android.Manifest
+import android.content.Intent
 import android.os.Bundle
+import android.provider.Telephony
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.fillMaxSize
+import androidx.compose.material3.AlertDialog
 import androidx.compose.material3.MaterialTheme
 import androidx.compose.material3.Surface
+import androidx.compose.material3.Text
+import androidx.compose.material3.TextButton
 import androidx.compose.runtime.*
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.platform.LocalContext
@@ -56,16 +61,59 @@ class MainActivityCompose : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SafeSmsApp()
+                    SafeSmsApp(
+                        onRequestDefaultSmsApp = { requestDefaultSmsApp() }
+                    )
                 }
             }
         }
     }
+
+    private fun requestDefaultSmsApp() {
+        val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
+            putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
+        }
+        startActivity(intent)
+    }
 }
 
 @Composable
-fun SafeSmsApp() {
+fun SafeSmsApp(
+    onRequestDefaultSmsApp: () -> Unit
+) {
+    val context = LocalContext.current
     val navController = rememberNavController()
+    var showDefaultSmsDialog by remember { mutableStateOf(false) }
+
+    // 앱 시작 시 기본 SMS 앱인지 확인
+    LaunchedEffect(Unit) {
+        val defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context)
+        if (defaultSmsPackage != context.packageName) {
+            showDefaultSmsDialog = true
+        }
+    }
+
+    // 기본 SMS 앱 설정 다이얼로그
+    if (showDefaultSmsDialog) {
+        AlertDialog(
+            onDismissRequest = { showDefaultSmsDialog = false },
+            title = { Text("기본 SMS 앱 설정") },
+            text = { Text("SafeSms를 기본 SMS 앱으로 설정하시겠습니까?\n\n기본 SMS 앱으로 설정하면 모든 SMS를 이 앱에서 받을 수 있습니다.") },
+            confirmButton = {
+                TextButton(onClick = {
+                    showDefaultSmsDialog = false
+                    onRequestDefaultSmsApp()
+                }) {
+                    Text("설정")
+                }
+            },
+            dismissButton = {
+                TextButton(onClick = { showDefaultSmsDialog = false }) {
+                    Text("나중에")
+                }
+            }
+        )
+    }
 
     NavHost(
         navController = navController,
