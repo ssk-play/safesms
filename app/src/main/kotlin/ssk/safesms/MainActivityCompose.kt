@@ -1,8 +1,12 @@
 package ssk.safesms
 
 import android.Manifest
+import android.app.role.RoleManager
+import android.content.Context
 import android.content.Intent
+import android.os.Build
 import android.os.Bundle
+import android.provider.Settings
 import android.provider.Telephony
 import android.util.Log
 import android.widget.Toast
@@ -50,6 +54,20 @@ class MainActivityCompose : ComponentActivity() {
         }
     }
 
+    // RoleManager를 사용한 기본 SMS 앱 요청 (Android 10+)
+    private val roleManagerLauncher = registerForActivityResult(
+        ActivityResultContracts.StartActivityForResult()
+    ) { result ->
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+            val roleManager = getSystemService(Context.ROLE_SERVICE) as RoleManager
+            if (roleManager.isRoleHeld(RoleManager.ROLE_SMS)) {
+                Toast.makeText(this, "SafeSms가 기본 SMS 앱으로 설정되었습니다", Toast.LENGTH_SHORT).show()
+            } else {
+                Toast.makeText(this, "기본 SMS 앱으로 설정되지 않았습니다", Toast.LENGTH_SHORT).show()
+            }
+        }
+    }
+
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
@@ -74,23 +92,56 @@ class MainActivityCompose : ComponentActivity() {
         Log.d("MainActivityCompose", "Requesting default SMS app")
         Log.d("MainActivityCompose", "Current package: $packageName")
         Log.d("MainActivityCompose", "Current default SMS package: ${Telephony.Sms.getDefaultSmsPackage(this)}")
+        Log.d("MainActivityCompose", "Android version: ${Build.VERSION.SDK_INT}")
 
         try {
-            val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
-                putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
-            }
+            // Android 10 (API 29) 이상: RoleManager 사용
+            if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                val roleManager = getSystemService(Context.ROLE_SERVICE) as RoleManager
 
-            // Intent가 처리 가능한지 확인
-            if (intent.resolveActivity(packageManager) != null) {
-                Log.d("MainActivityCompose", "Starting ACTION_CHANGE_DEFAULT intent")
-                startActivity(intent)
-            } else {
-                Log.e("MainActivityCompose", "No activity found to handle ACTION_CHANGE_DEFAULT")
-                Toast.makeText(this, "시스템에서 기본 SMS 앱 변경을 지원하지 않습니다", Toast.LENGTH_LONG).show()
+                if (roleManager.isRoleAvailable(RoleManager.ROLE_SMS)) {
+                    if (!roleManager.isRoleHeld(RoleManager.ROLE_SMS)) {
+                        val intent = roleManager.createRequestRoleIntent(RoleManager.ROLE_SMS)
+                        Log.d("MainActivityCompose", "Using RoleManager (Android 10+)")
+                        roleManagerLauncher.launch(intent)
+                    } else {
+                        Log.d("MainActivityCompose", "Already default SMS app")
+                        Toast.makeText(this, "이미 기본 SMS 앱입니다", Toast.LENGTH_SHORT).show()
+                    }
+                } else {
+                    Log.e("MainActivityCompose", "SMS role not available")
+                    fallbackToSettings()
+                }
+            }
+            // Android 4.4 ~ 9: ACTION_CHANGE_DEFAULT 사용
+            else {
+                val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
+                    putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
+                }
+
+                if (intent.resolveActivity(packageManager) != null) {
+                    Log.d("MainActivityCompose", "Using ACTION_CHANGE_DEFAULT (Android 4.4-9)")
+                    startActivity(intent)
+                } else {
+                    Log.e("MainActivityCompose", "ACTION_CHANGE_DEFAULT not available")
+                    fallbackToSettings()
+                }
             }
         } catch (e: Exception) {
             Log.e("MainActivityCompose", "Failed to request default SMS app", e)
-            Toast.makeText(this, "기본 SMS 앱 설정 실패: ${e.message}", Toast.LENGTH_LONG).show()
+            fallbackToSettings()
+        }
+    }
+
+    private fun fallbackToSettings() {
+        try {
+            Log.d("MainActivityCompose", "Opening system settings as fallback")
+            val intent = Intent(Settings.ACTION_SETTINGS)
+            startActivity(intent)
+            Toast.makeText(this, "설정에서 '기본 앱 > SMS 앱'을 선택하여 SafeSms를 설정해주세요", Toast.LENGTH_LONG).show()
+        } catch (e: Exception) {
+            Log.e("MainActivityCompose", "Failed to open settings", e)
+            Toast.makeText(this, "설정을 열 수 없습니다", Toast.LENGTH_SHORT).show()
         }
     }
 }
