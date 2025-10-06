@@ -41,10 +41,17 @@ class MainActivityCompose : ComponentActivity() {
     ) { result ->
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
             val roleManager = getSystemService(Context.ROLE_SERVICE) as RoleManager
-            if (roleManager.isRoleHeld(RoleManager.ROLE_SMS)) {
+            val isDefaultSmsApp = roleManager.isRoleHeld(RoleManager.ROLE_SMS)
+
+            if (isDefaultSmsApp) {
+                // 실제로 기본 SMS 앱으로 설정된 경우에만 상태 저장
+                val prefs = getSharedPreferences("safesms_prefs", Context.MODE_PRIVATE)
+                prefs.edit().putBoolean("default_sms_asked", true).apply()
                 Toast.makeText(this, "SafeSms가 기본 SMS 앱으로 설정되었습니다", Toast.LENGTH_SHORT).show()
+                Log.d("MainActivityCompose", "Default SMS app set successfully")
             } else {
                 Toast.makeText(this, "기본 SMS 앱으로 설정되지 않았습니다", Toast.LENGTH_SHORT).show()
+                Log.d("MainActivityCompose", "User did not set as default SMS app")
             }
         }
     }
@@ -124,6 +131,44 @@ class MainActivityCompose : ComponentActivity() {
     }
 }
 
+// 기본 SMS 앱 확인 및 다이얼로그 표시 여부 결정
+private fun checkAndShowDefaultSmsDialog(context: Context, onResult: (Boolean) -> Unit) {
+    val prefs = context.getSharedPreferences("safesms_prefs", Context.MODE_PRIVATE)
+    val alreadySet = prefs.getBoolean("default_sms_asked", false)
+
+    // 이미 기본 SMS 앱으로 설정되어 있으면 다시 묻지 않음
+    if (alreadySet) {
+        android.util.Log.d("SafeSmsApp", "Already set as default SMS app (from prefs)")
+        onResult(false)
+        return
+    }
+
+    val isDefaultSmsApp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+        // Android 10+: RoleManager 사용
+        val roleManager = context.getSystemService(Context.ROLE_SERVICE) as? RoleManager
+        val isDefault = roleManager?.isRoleHeld(RoleManager.ROLE_SMS) == true
+        android.util.Log.d("SafeSmsApp", "Using RoleManager - isRoleHeld: $isDefault")
+        isDefault
+    } else {
+        // Android 9 이하: Telephony API 사용
+        val defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context)
+        val isDefault = defaultSmsPackage == context.packageName
+        android.util.Log.d("SafeSmsApp", "Using Telephony - default: $defaultSmsPackage, ours: ${context.packageName}")
+        isDefault
+    }
+
+    if (isDefaultSmsApp) {
+        // 이미 기본 앱이면 상태 저장하고 다시 묻지 않음
+        prefs.edit().putBoolean("default_sms_asked", true).apply()
+        android.util.Log.d("SafeSmsApp", "Already default SMS app - saving state")
+        onResult(false)
+    } else {
+        // 기본 앱이 아니면 다이얼로그 표시
+        android.util.Log.d("SafeSmsApp", "Not default SMS app - showing dialog")
+        onResult(true)
+    }
+}
+
 @Composable
 fun SafeSmsApp(
     onRequestDefaultSmsApp: () -> Unit
@@ -132,6 +177,7 @@ fun SafeSmsApp(
     val navController = rememberNavController()
     var showDefaultSmsDialog by remember { mutableStateOf(false) }
     var permissionsGranted by remember { mutableStateOf(false) }
+    val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
     // 필요한 권한 목록
     val requiredPermissions = arrayOf(
@@ -167,34 +213,28 @@ fun SafeSmsApp(
         }
     }
 
-    // 권한 허용 후 기본 SMS 앱인지 확인 (한 번만)
+    // 권한 허용 후 기본 SMS 앱인지 확인
     LaunchedEffect(permissionsGranted) {
         if (permissionsGranted) {
-            val prefs = context.getSharedPreferences("safesms_prefs", Context.MODE_PRIVATE)
-            val alreadyAsked = prefs.getBoolean("default_sms_asked", false)
+            checkAndShowDefaultSmsDialog(context) { show ->
+                showDefaultSmsDialog = show
+            }
+        }
+    }
 
-            if (!alreadyAsked) {
-                val isDefaultSmsApp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                    // Android 10+: RoleManager 사용
-                    val roleManager = context.getSystemService(Context.ROLE_SERVICE) as? RoleManager
-                    val isDefault = roleManager?.isRoleHeld(RoleManager.ROLE_SMS) == true
-                    android.util.Log.d("SafeSmsApp", "Using RoleManager - isRoleHeld: $isDefault")
-                    isDefault
-                } else {
-                    // Android 9 이하: Telephony API 사용
-                    val defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context)
-                    val isDefault = defaultSmsPackage == context.packageName
-                    android.util.Log.d("SafeSmsApp", "Using Telephony - default: $defaultSmsPackage, ours: ${context.packageName}")
-                    isDefault
-                }
-
-                if (!isDefaultSmsApp) {
-                    showDefaultSmsDialog = true
-                } else {
-                    // 이미 기본 앱이면 다시 묻지 않음
-                    prefs.edit().putBoolean("default_sms_asked", true).apply()
+    // onResume 시 기본 SMS 앱 상태 재확인
+    DisposableEffect(lifecycleOwner, permissionsGranted) {
+        val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME && permissionsGranted) {
+                android.util.Log.d("SafeSmsApp", "onResume - checking default SMS app status")
+                checkAndShowDefaultSmsDialog(context) { show ->
+                    showDefaultSmsDialog = show
                 }
             }
+        }
+        lifecycleOwner.lifecycle.addObserver(observer)
+        onDispose {
+            lifecycleOwner.lifecycle.removeObserver(observer)
         }
     }
 
@@ -203,9 +243,7 @@ fun SafeSmsApp(
         AlertDialog(
             onDismissRequest = {
                 showDefaultSmsDialog = false
-                // 나중에 다시 묻지 않도록 표시
-                val prefs = context.getSharedPreferences("safesms_prefs", Context.MODE_PRIVATE)
-                prefs.edit().putBoolean("default_sms_asked", true).apply()
+                // dismiss 시에는 상태 저장하지 않음
             },
             title = { Text("기본 SMS 앱 설정") },
             text = { Text("SafeSms를 기본 SMS 앱으로 설정하시겠습니까?\n\n기본 SMS 앱으로 설정하면 모든 SMS를 이 앱에서 받을 수 있습니다.") },
@@ -213,9 +251,7 @@ fun SafeSmsApp(
                 TextButton(onClick = {
                     android.util.Log.d("SafeSmsApp", "User clicked 설정 button")
                     showDefaultSmsDialog = false
-                    // 나중에 다시 묻지 않도록 표시
-                    val prefs = context.getSharedPreferences("safesms_prefs", Context.MODE_PRIVATE)
-                    prefs.edit().putBoolean("default_sms_asked", true).apply()
+                    // "설정" 클릭 시에는 상태 저장하지 않음 - 실제 설정 완료 후 저장
                     onRequestDefaultSmsApp()
                 }) {
                     Text("설정")
@@ -224,9 +260,7 @@ fun SafeSmsApp(
             dismissButton = {
                 TextButton(onClick = {
                     showDefaultSmsDialog = false
-                    // 나중에 다시 묻지 않도록 표시
-                    val prefs = context.getSharedPreferences("safesms_prefs", Context.MODE_PRIVATE)
-                    prefs.edit().putBoolean("default_sms_asked", true).apply()
+                    // "나중에" 클릭 시 일시적으로만 숨김 (다음 실행 시 다시 표시)
                 }) {
                     Text("나중에")
                 }
