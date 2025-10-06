@@ -274,14 +274,8 @@ fun SafeSmsApp(
                     )
 
                     Text(
-                        text = "SafeSms는 기본 SMS 앱 전용입니다",
-                        style = MaterialTheme.typography.titleLarge,
-                        color = MaterialTheme.colorScheme.onPrimaryContainer
-                    )
-
-                    Text(
-                        text = "이 앱을 사용하려면 기본 SMS 앱으로 설정해주세요",
-                        style = MaterialTheme.typography.bodyLarge,
+                        text = "기본 SMS 앱으로 설정해야\n모든 기능을 사용할 수 있습니다.",
+                        style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
 
