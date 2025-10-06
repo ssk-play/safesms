@@ -4,6 +4,7 @@ import android.Manifest
 import android.content.Intent
 import android.os.Bundle
 import android.provider.Telephony
+import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
 import androidx.activity.compose.setContent
@@ -70,10 +71,27 @@ class MainActivityCompose : ComponentActivity() {
     }
 
     private fun requestDefaultSmsApp() {
-        val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
-            putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
+        Log.d("MainActivityCompose", "Requesting default SMS app")
+        Log.d("MainActivityCompose", "Current package: $packageName")
+        Log.d("MainActivityCompose", "Current default SMS package: ${Telephony.Sms.getDefaultSmsPackage(this)}")
+
+        try {
+            val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
+                putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
+            }
+
+            // Intent가 처리 가능한지 확인
+            if (intent.resolveActivity(packageManager) != null) {
+                Log.d("MainActivityCompose", "Starting ACTION_CHANGE_DEFAULT intent")
+                startActivity(intent)
+            } else {
+                Log.e("MainActivityCompose", "No activity found to handle ACTION_CHANGE_DEFAULT")
+                Toast.makeText(this, "시스템에서 기본 SMS 앱 변경을 지원하지 않습니다", Toast.LENGTH_LONG).show()
+            }
+        } catch (e: Exception) {
+            Log.e("MainActivityCompose", "Failed to request default SMS app", e)
+            Toast.makeText(this, "기본 SMS 앱 설정 실패: ${e.message}", Toast.LENGTH_LONG).show()
         }
-        startActivity(intent)
     }
 }
 
@@ -88,6 +106,8 @@ fun SafeSmsApp(
     // 앱 시작 시 기본 SMS 앱인지 확인
     LaunchedEffect(Unit) {
         val defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context)
+        android.util.Log.d("SafeSmsApp", "Current default SMS package: $defaultSmsPackage")
+        android.util.Log.d("SafeSmsApp", "Our package: ${context.packageName}")
         if (defaultSmsPackage != context.packageName) {
             showDefaultSmsDialog = true
         }
@@ -101,6 +121,7 @@ fun SafeSmsApp(
             text = { Text("SafeSms를 기본 SMS 앱으로 설정하시겠습니까?\n\n기본 SMS 앱으로 설정하면 모든 SMS를 이 앱에서 받을 수 있습니다.") },
             confirmButton = {
                 TextButton(onClick = {
+                    android.util.Log.d("SafeSmsApp", "User clicked 설정 button")
                     showDefaultSmsDialog = false
                     onRequestDefaultSmsApp()
                 }) {
