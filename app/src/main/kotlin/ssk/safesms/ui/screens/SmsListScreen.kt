@@ -161,6 +161,7 @@ fun SmsThreadItem(
                     fontWeight = FontWeight.Bold
                 )
                 Spacer(modifier = Modifier.height(4.dp))
+                // SAFETY FEATURE: Links in message preview are NOT clickable
                 Text(
                     text = thread.snippet,
                     style = MaterialTheme.typography.bodyMedium,

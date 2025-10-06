@@ -178,6 +178,9 @@ fun MessageItem(message: SmsMessage) {
                 },
                 modifier = Modifier.widthIn(max = 280.dp)
             ) {
+                // SAFETY FEATURE: Links are NOT clickable
+                // Compose Text does not automatically detect or activate links
+                // This keeps children safe from accidental web browsing
                 Text(
                     text = message.body,
                     modifier = Modifier.padding(12.dp),
