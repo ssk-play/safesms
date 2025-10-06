@@ -31,7 +31,6 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ConversationScreen(
-    banner: @Composable () -> Unit = {},
     threadId: Long,
     address: String,
     viewModel: ConversationViewModel = viewModel(),
@@ -132,23 +131,16 @@ fun ConversationScreen(
             }
         }
     ) { paddingValues ->
-        Column(
+        LazyColumn(
+            state = listState,
             modifier = Modifier
                 .fillMaxSize()
                 .padding(paddingValues)
+                .padding(horizontal = 8.dp),
+            verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
-            banner()
-
-            LazyColumn(
-                state = listState,
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(horizontal = 8.dp),
-                verticalArrangement = Arrangement.spacedBy(4.dp)
-            ) {
-                items(messages) { message ->
-                    MessageItem(message = message)
-                }
+            items(messages) { message ->
+                MessageItem(message = message)
             }
         }
     }

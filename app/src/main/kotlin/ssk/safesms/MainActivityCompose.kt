@@ -15,8 +15,6 @@ import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
-import androidx.compose.material.icons.Icons
-import androidx.compose.material.icons.filled.Close
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -247,13 +245,16 @@ fun SafeSmsApp(
         return
     }
 
-    // 배너 컴포저블
-    val banner: @Composable () -> Unit = {
-        if (showDefaultSmsDialog) {
+    // 기본 앱이 아니면 전체 화면에 안내 메시지 표시
+    if (showDefaultSmsDialog) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
             Card(
                 modifier = Modifier
                     .fillMaxWidth()
-                    .padding(horizontal = 16.dp, vertical = 8.dp),
+                    .padding(32.dp),
                 colors = CardDefaults.cardColors(
                     containerColor = MaterialTheme.colorScheme.primaryContainer
                 )
@@ -261,103 +262,92 @@ fun SafeSmsApp(
                 Column(
                     modifier = Modifier
                         .fillMaxWidth()
-                        .padding(16.dp)
+                        .padding(24.dp),
+                    horizontalAlignment = Alignment.CenterHorizontally,
+                    verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
-                    Row(
-                        modifier = Modifier.fillMaxWidth(),
-                        horizontalArrangement = Arrangement.SpaceBetween,
-                        verticalAlignment = Alignment.CenterVertically
+                    Text(
+                        text = "SafeSms",
+                        style = MaterialTheme.typography.headlineLarge,
+                        fontWeight = FontWeight.Bold,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+
+                    Text(
+                        text = "SafeSms는 기본 SMS 앱 전용입니다",
+                        style = MaterialTheme.typography.titleLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+
+                    Text(
+                        text = "이 앱을 사용하려면 기본 SMS 앱으로 설정해주세요",
+                        style = MaterialTheme.typography.bodyLarge,
+                        color = MaterialTheme.colorScheme.onPrimaryContainer
+                    )
+
+                    Spacer(modifier = Modifier.height(8.dp))
+
+                    Button(
+                        onClick = {
+                            settingClickCount++
+                            Log.d("SafeSmsApp", "User clicked 설정 button (count: $settingClickCount)")
+                            onRequestDefaultSmsApp()
+                        },
+                        modifier = Modifier.fillMaxWidth()
                     ) {
-                        Column(modifier = Modifier.weight(1f)) {
-                            Text(
-                                text = "기본 SMS 앱으로 설정하세요",
-                                style = MaterialTheme.typography.titleMedium,
-                                fontWeight = FontWeight.Bold,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                            Spacer(modifier = Modifier.height(4.dp))
-                            Text(
-                                text = "모든 SMS를 SafeSms에서 받을 수 있습니다",
-                                style = MaterialTheme.typography.bodyMedium,
-                                color = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
-                        IconButton(onClick = {
-                            showDefaultSmsDialog = false
-                        }) {
-                            Icon(
-                                imageVector = Icons.Default.Close,
-                                contentDescription = "닫기",
-                                tint = MaterialTheme.colorScheme.onPrimaryContainer
-                            )
-                        }
+                        Text("기본 SMS 앱으로 설정")
                     }
-                    Spacer(modifier = Modifier.height(12.dp))
-                    Row(
-                        horizontalArrangement = Arrangement.spacedBy(8.dp)
-                    ) {
-                        // 3회 이상 클릭 시 직접 설정 버튼 표시
-                        if (settingClickCount >= 3) {
-                            OutlinedButton(
-                                onClick = {
-                                    android.util.Log.d("SafeSmsApp", "User clicked 직접 설정 button")
-                                    onOpenSystemSettings()
-                                },
-                                modifier = Modifier.weight(1f)
-                            ) {
-                                Text("직접 설정")
-                            }
-                        }
-                        Button(
+
+                    // 3회 이상 클릭 시 직접 설정 버튼 표시
+                    if (settingClickCount >= 3) {
+                        OutlinedButton(
                             onClick = {
-                                settingClickCount++
-                                android.util.Log.d("SafeSmsApp", "User clicked 설정 button (count: $settingClickCount)")
-                                onRequestDefaultSmsApp()
+                                Log.d("SafeSmsApp", "User clicked 직접 설정 button")
+                                onOpenSystemSettings()
                             },
-                            modifier = if (settingClickCount >= 3) Modifier.weight(1f) else Modifier.fillMaxWidth()
+                            modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("설정")
+                            Text("시스템 설정에서 직접 설정")
                         }
                     }
                 }
             }
         }
-    }
+    } else {
+        // 기본 앱일 때만 NavHost 렌더링
+        NavHost(
+            navController = navController,
+            startDestination = "sms_list",
+            modifier = Modifier.fillMaxSize()
+        ) {
+            composable("sms_list") {
+                val viewModel: HomeViewModel = viewModel()
+                SmsListScreen(
+                    viewModel = viewModel,
+                    onThreadClick = { thread ->
+                        navController.navigate("conversation/${thread.threadId}/${thread.address}")
+                    }
+                )
+            }
 
-    NavHost(
-        navController = navController,
-        startDestination = "sms_list",
-        modifier = Modifier.fillMaxSize()
-    ) {
-        composable("sms_list") {
-            val viewModel: HomeViewModel = viewModel()
-            SmsListScreen(
-                banner = banner,
-                viewModel = viewModel,
-                onThreadClick = { thread ->
-                    navController.navigate("conversation/${thread.threadId}/${thread.address}")
-                }
-            )
-        }
+            composable(
+                route = "conversation/{threadId}/{address}",
+                arguments = listOf(
+                    navArgument("threadId") { type = NavType.LongType },
+                    navArgument("address") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val threadId = backStackEntry.arguments?.getLong("threadId") ?: -1L
+                val address = backStackEntry.arguments?.getString("address") ?: ""
+                val viewModel: ConversationViewModel = viewModel()
 
-        composable(
-            route = "conversation/{threadId}/{address}",
-            arguments = listOf(
-                navArgument("threadId") { type = NavType.LongType },
-                navArgument("address") { type = NavType.StringType }
-            )
-        ) { backStackEntry ->
-            val threadId = backStackEntry.arguments?.getLong("threadId") ?: -1L
-            val address = backStackEntry.arguments?.getString("address") ?: ""
-            val viewModel: ConversationViewModel = viewModel()
-
-            ConversationScreen(
-                banner = banner,
-                threadId = threadId,
-                address = address,
-                viewModel = viewModel,
-                onBackClick = { navController.popBackStack() }
-            )
+                ConversationScreen(
+                    threadId = threadId,
+                    address = address,
+                    viewModel = viewModel,
+                    onBackClick = { navController.popBackStack() }
+                )
+            }
         }
     }
 }
