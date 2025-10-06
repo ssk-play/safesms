@@ -1,0 +1,50 @@
+SafeSms - Your Secure SMS Messaging Solution
+
+SafeSms is a modern, lightweight SMS messaging application designed with privacy and simplicity in mind. Built with Material 3 design principles, SafeSms provides a clean and intuitive interface for all your text messaging needs.
+
+KEY FEATURES:
+
+📱 Full SMS Functionality
+• Send and receive text messages seamlessly
+• Threaded conversation view for easy reading
+• Real-time message delivery and reception
+• Support for long messages (SMS concatenation)
+
+🔔 Smart Notifications
+• Intelligent notification system that respects your context
+• Quick Reply directly from notifications
+• No interruptions when actively viewing conversations
+• Customizable notification channels
+
+💬 Modern Design
+• Clean Material 3 design language
+• Intuitive conversation interface
+• Message bubbles with timestamps
+• Responsive and fluid animations
+
+🔒 Privacy & Security
+• No ads, no tracking, no data collection
+• Your messages stay on your device
+• Minimal permissions required
+• Open source and transparent
+
+⚡ Performance
+• Lightweight and fast
+• Battery efficient
+• Low memory footprint
+• Optimized for modern Android devices
+
+🎯 User-Friendly Features
+• Easy contact management
+• Search through conversations
+• Automatic refresh on app resume
+• Share messages from other apps
+
+REQUIREMENTS:
+• Android 8.0 (API 26) or higher
+• Must be set as default SMS app to access all features
+• SMS permissions required for core functionality
+
+SafeSms is perfect for users who want a straightforward, reliable SMS app without unnecessary bloat or privacy concerns. Whether you're sending a quick text or managing multiple conversations, SafeSms provides the tools you need with a interface you'll love.
+
+Download SafeSms today and experience messaging the way it should be - simple, secure, and efficient.
