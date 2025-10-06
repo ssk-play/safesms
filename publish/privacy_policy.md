@@ -91,40 +91,10 @@ Note: Uninstalling SafeSms does not delete your SMS messages from your device, a
 
 We may update this Privacy Policy from time to time. Changes will be posted within the app and on this page. Continued use of SafeSms after changes constitutes acceptance of the updated policy.
 
-## Your Rights
-
-You have the right to:
-- Access your data (viewable within the app)
-- Delete the app and all associated preferences
-- Revoke permissions at any time through Android settings
-- Switch to a different SMS app at any time
-
-## Contact Us
-
-If you have questions or concerns about this Privacy Policy or SafeSms's data practices, please contact us at:
+## Contact
 
 **Email**: [YOUR_EMAIL@example.com]
 
-## Legal Compliance
-
-SafeSms complies with:
-- Android's SMS and MMS guidelines
-- Google Play Store policies
-- General Data Protection Regulation (GDPR) principles
-- California Consumer Privacy Act (CCPA) principles
-
-## Open Source
-
-SafeSms is open source software. You can review the source code to verify our privacy practices at:
-[YOUR_REPOSITORY_URL]
-
----
-
 ## Summary
 
-**TL;DR**: SafeSms is a child-safe, privacy-focused SMS app with link blocking. Your messages stay on your device. We don't collect, store, share, or sell your data. No ads, no tracking, no servers, no clickable links. Perfect for kids' first phones. Uninstall anytime to remove the app.
-
----
-
-**SafeSms - Secure Messaging**
-Version 1.0.0
+SafeSms is a child-safe SMS app with link blocking. Your messages stay on your device. We don't collect, store, share, or sell your data. No ads, no tracking, no servers.
