@@ -295,15 +295,6 @@ fun SafeSmsApp(
                     Row(
                         horizontalArrangement = Arrangement.spacedBy(8.dp)
                     ) {
-                        Button(
-                            onClick = {
-                                android.util.Log.d("SafeSmsApp", "User clicked 설정 button")
-                                onRequestDefaultSmsApp()
-                            },
-                            modifier = Modifier.weight(1f)
-                        ) {
-                            Text("설정")
-                        }
                         OutlinedButton(
                             onClick = {
                                 android.util.Log.d("SafeSmsApp", "User clicked 직접 설정 button")
@@ -312,6 +303,15 @@ fun SafeSmsApp(
                             modifier = Modifier.weight(1f)
                         ) {
                             Text("직접 설정")
+                        }
+                        Button(
+                            onClick = {
+                                android.util.Log.d("SafeSmsApp", "User clicked 설정 button")
+                                onRequestDefaultSmsApp()
+                            },
+                            modifier = Modifier.weight(1f)
+                        ) {
+                            Text("설정")
                         }
                     }
                 }
