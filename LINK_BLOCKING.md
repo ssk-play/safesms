@@ -1,11 +1,11 @@
 # Link Blocking Feature
 
-SafeSms is designed with child safety in mind. The primary safety feature is **link blocking** - preventing all URLs, phone numbers, and addresses from being clickable in messages.
+Kids SMS is designed with child safety in mind. The primary safety feature is **link blocking** - preventing all URLs, phone numbers, and addresses from being clickable in messages.
 
 ## How It Works
 
 ### Jetpack Compose Text
-SafeSms uses Jetpack Compose's `Text` composable, which **does NOT automatically detect or activate links** by default. Unlike Android's traditional `TextView` with `autoLink` enabled, Compose Text requires explicit `AnnotatedString` with URL annotations to make links clickable.
+Kids SMS uses Jetpack Compose's `Text` composable, which **does NOT automatically detect or activate links** by default. Unlike Android's traditional `TextView` with `autoLink` enabled, Compose Text requires explicit `AnnotatedString` with URL annotations to make links clickable.
 
 ### Implementation
 
@@ -67,7 +67,7 @@ Text(
 To verify link blocking is working:
 
 1. Send a message containing URLs (e.g., "Check out https://example.com")
-2. Open the message in SafeSms
+2. Open the message in Kids SMS
 3. Try to tap on the URL
 4. **Expected result**: Nothing happens, URL is not clickable
 5. **If clickable**: Link blocking is NOT working (bug)
@@ -127,5 +127,5 @@ Notifications use `NotificationCompat.MessagingStyle` which may auto-detect link
 
 ---
 
-**SafeSms - Safe Messaging for Kids**
+**Kids SMS - Safe Messaging**
 Keeping children focused on communication, free from web distractions.

@@ -289,7 +289,7 @@ fun SafeSmsApp(
                     )
 
                     Text(
-                        text = "You must set SafeSms as your default SMS app\nto use all features.",
+                        text = "You must set Kids SMS as your default SMS app\nto use all features.",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )

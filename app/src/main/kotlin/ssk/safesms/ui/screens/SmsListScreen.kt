@@ -101,7 +101,7 @@ fun SmsListScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("SafeSms") },
+                title = { Text("Kids SMS") },
                 actions = {
                     IconButton(onClick = { viewModel.loadThreads() }) {
                         Icon(Icons.Default.Refresh, contentDescription = "Refresh")

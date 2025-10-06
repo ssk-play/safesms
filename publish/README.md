@@ -1,4 +1,4 @@
-# SafeSms - Play Store Publishing
+# Kids SMS - Play Store Publishing
 
 ## App Concept
 Child-safe SMS app with all links disabled

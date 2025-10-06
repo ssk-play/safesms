@@ -1,10 +1,10 @@
-SafeSms - Safe Messaging for Kids
+Kids SMS - Safe Messaging
 
-An SMS app designed for children. SafeSms blocks all links in messages, keeping kids focused on communication without the distraction of websites, videos, or other apps.
+An SMS app designed for children. Kids SMS blocks all links in messages, keeping kids focused on communication without the distraction of websites, videos, or other apps.
 
 🛡️ LINK BLOCKING
 
-Traditional SMS apps make every URL, phone number, and address clickable - turning a simple message into a gateway to endless distractions. SafeSms solves this:
+Traditional SMS apps make every URL, phone number, and address clickable - turning a simple message into a gateway to endless distractions. Kids SMS solves this:
 
 • ALL links are disabled in messages
 • No clickable URLs, phone numbers, or addresses
@@ -32,4 +32,4 @@ REQUIREMENTS
 • Android 8.0 or higher
 • Must be set as default SMS app
 
-SafeSms keeps it simple - safe messaging for children without distractions.
+Kids SMS keeps it simple - safe messaging for children without distractions.

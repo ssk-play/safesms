@@ -1,14 +1,14 @@
-# Privacy Policy for SafeSms
+# Privacy Policy for Kids SMS
 
 **Last Updated**: October 7, 2025
 
 ## Introduction
 
-SafeSms ("we", "our", or "the app") is a child-safe SMS messaging application with link blocking features. We are committed to protecting your family's privacy. This Privacy Policy explains how SafeSms handles your information when you use our SMS messaging application.
+Kids SMS ("we", "our", or "the app") is a child-safe SMS messaging application with link blocking features. We are committed to protecting your family's privacy. This Privacy Policy explains how Kids SMS handles your information when you use our SMS messaging application.
 
 ## Information We Collect
 
-SafeSms requires access to the following information to function as an SMS application:
+Kids SMS requires access to the following information to function as an SMS application:
 
 ### SMS Messages
 - **What**: Your text messages (sent and received)
@@ -27,7 +27,7 @@ SafeSms requires access to the following information to function as an SMS appli
 
 ## How We Use Your Information
 
-SafeSms uses the collected information solely for:
+Kids SMS uses the collected information solely for:
 - Displaying your SMS conversations
 - Sending and receiving text messages
 - Showing contact names in message threads
@@ -35,13 +35,13 @@ SafeSms uses the collected information solely for:
 
 ## Data Storage and Security
 
-- **Local Storage Only**: All your data remains on your device. SafeSms does not have servers or cloud storage.
+- **Local Storage Only**: All your data remains on your device. Kids SMS does not have servers or cloud storage.
 - **No Transmission**: Your messages and contacts are never transmitted to our servers or any third parties.
 - **Device Security**: Your data security depends on your device's security settings.
 
 ## What We Don't Do
 
-SafeSms does NOT:
+Kids SMS does NOT:
 - ❌ Collect or store your data on external servers
 - ❌ Share your information with third parties
 - ❌ Sell your data to advertisers
@@ -52,7 +52,7 @@ SafeSms does NOT:
 
 ## Permissions Required
 
-SafeSms requests the following Android permissions:
+Kids SMS requests the following Android permissions:
 
 | Permission | Purpose |
 |------------|---------|
@@ -65,31 +65,31 @@ SafeSms requests the following Android permissions:
 
 ## Third-Party Services
 
-SafeSms does not integrate with any third-party services, analytics platforms, or advertising networks. The app operates entirely offline except for sending/receiving SMS through your carrier.
+Kids SMS does not integrate with any third-party services, analytics platforms, or advertising networks. The app operates entirely offline except for sending/receiving SMS through your carrier.
 
 ## Children's Privacy
 
-SafeSms is specifically designed for children with parental supervision. The app:
+Kids SMS is specifically designed for children with parental supervision. The app:
 - Does not collect any personal information from children
 - Does not transmit data to external servers
 - Keeps all messages locally on the device
 - Blocks all links to prevent access to external content
 - Requires parental setup as default SMS app
 
-Parents/guardians should supervise the setup and usage of SafeSms. All data remains on the device and under the parent's/guardian's control.
+Parents/guardians should supervise the setup and usage of Kids SMS. All data remains on the device and under the parent's/guardian's control.
 
 ## Data Deletion
 
-To delete all data associated with SafeSms:
+To delete all data associated with Kids SMS:
 1. Uninstall the app from your device
 2. All locally stored preferences will be removed
 3. Your SMS messages remain in your device's system storage (managed by Android)
 
-Note: Uninstalling SafeSms does not delete your SMS messages from your device, as they are stored in the Android system database and are accessible by other SMS apps.
+Note: Uninstalling Kids SMS does not delete your SMS messages from your device, as they are stored in the Android system database and are accessible by other SMS apps.
 
 ## Changes to This Privacy Policy
 
-We may update this Privacy Policy from time to time. Changes will be posted within the app and on this page. Continued use of SafeSms after changes constitutes acceptance of the updated policy.
+We may update this Privacy Policy from time to time. Changes will be posted within the app and on this page. Continued use of Kids SMS after changes constitutes acceptance of the updated policy.
 
 ## Contact
 
@@ -97,4 +97,4 @@ We may update this Privacy Policy from time to time. Changes will be posted with
 
 ## Summary
 
-SafeSms is a child-safe SMS app with link blocking. Your messages stay on your device. We don't collect, store, share, or sell your data. No ads, no tracking, no servers.
+Kids SMS is a child-safe SMS app with link blocking. Your messages stay on your device. We don't collect, store, share, or sell your data. No ads, no tracking, no servers.
