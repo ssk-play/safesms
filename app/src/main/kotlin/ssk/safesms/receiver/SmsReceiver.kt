@@ -7,6 +7,7 @@ import android.content.Intent
 import android.provider.Telephony
 import android.util.Log
 import android.widget.Toast
+import ssk.safesms.notification.SmsNotificationManager
 
 /**
  * SMS 수신 BroadcastReceiver (기본 SMS 앱 전용)
@@ -27,6 +28,9 @@ class SmsReceiver : BroadcastReceiver() {
             Log.w("SmsReceiver", "No messages in intent")
             return
         }
+
+        // Notification Manager 초기화
+        val notificationManager = SmsNotificationManager(context)
 
         for (message in messages) {
             val address = message.originatingAddress ?: "Unknown"
@@ -49,6 +53,18 @@ class SmsReceiver : BroadcastReceiver() {
 
                 val uri = context.contentResolver.insert(Telephony.Sms.Inbox.CONTENT_URI, values)
                 Log.d("SmsReceiver", "SMS saved to: $uri")
+
+                // threadId 추출
+                val threadId = uri?.lastPathSegment?.toLongOrNull() ?: -1L
+
+                // Notification 표시 (조건 확인 후)
+                notificationManager.showMessageNotification(
+                    address = address,
+                    message = body,
+                    threadId = threadId,
+                    unreadCount = 1
+                )
+
             } catch (e: Exception) {
                 Log.e("SmsReceiver", "Failed to save SMS", e)
                 Toast.makeText(context, "SMS 저장 실패: ${e.message}", Toast.LENGTH_LONG).show()

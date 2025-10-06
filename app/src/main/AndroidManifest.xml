@@ -11,6 +11,9 @@
     <uses-permission android:name="android.permission.RECEIVE_WAP_PUSH" />
     <uses-permission android:name="android.permission.RECEIVE_MMS" />
 
+    <!-- Notification 권한 (Android 13+) -->
+    <uses-permission android:name="android.permission.POST_NOTIFICATIONS" />
+
     <application
         android:allowBackup="true"
         android:dataExtractionRules="@xml/data_extraction_rules"
@@ -85,6 +88,15 @@
                 <data android:scheme="mmsto" />
             </intent-filter>
         </activity>
+
+        <!-- Quick Reply Receiver -->
+        <receiver
+            android:name=".receiver.QuickReplyReceiver"
+            android:exported="false">
+            <intent-filter>
+                <action android:name="ssk.safesms.ACTION_REPLY" />
+            </intent-filter>
+        </receiver>
     </application>
 
 </manifest>

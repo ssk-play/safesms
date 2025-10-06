@@ -23,6 +23,7 @@ import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import ssk.safesms.data.model.SmsMessage
+import ssk.safesms.notification.SmsNotificationManager
 import ssk.safesms.receiver.SmsReceiver
 import ssk.safesms.ui.conversation.ConversationViewModel
 import java.text.SimpleDateFormat
@@ -41,8 +42,17 @@ fun ConversationScreen(
     val listState = rememberLazyListState()
     val context = LocalContext.current
 
-    LaunchedEffect(threadId) {
+    LaunchedEffect(threadId, address) {
         viewModel.loadMessages(threadId)
+        // 현재 대화 설정
+        SmsNotificationManager.setCurrentConversation(address)
+    }
+
+    // 화면을 떠날 때 현재 대화 초기화
+    DisposableEffect(Unit) {
+        onDispose {
+            SmsNotificationManager.setCurrentConversation(null)
+        }
     }
 
     val coroutineScope = rememberCoroutineScope()

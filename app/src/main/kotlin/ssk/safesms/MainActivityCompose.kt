@@ -28,6 +28,7 @@ import androidx.navigation.compose.NavHost
 import androidx.navigation.compose.composable
 import androidx.navigation.compose.rememberNavController
 import androidx.navigation.navArgument
+import ssk.safesms.notification.SmsNotificationManager
 import ssk.safesms.ui.conversation.ConversationViewModel
 import ssk.safesms.ui.home.HomeViewModel
 import ssk.safesms.ui.screens.ConversationScreen
@@ -70,6 +71,16 @@ class MainActivityCompose : ComponentActivity() {
                 }
             }
         }
+    }
+
+    override fun onResume() {
+        super.onResume()
+        SmsNotificationManager.setAppForeground(true)
+    }
+
+    override fun onPause() {
+        super.onPause()
+        SmsNotificationManager.setAppForeground(false)
     }
 
     private fun requestDefaultSmsApp() {
@@ -176,12 +187,16 @@ fun SafeSmsApp(
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
     // 필요한 권한 목록
-    val requiredPermissions = arrayOf(
-        Manifest.permission.READ_SMS,
-        Manifest.permission.SEND_SMS,
-        Manifest.permission.RECEIVE_SMS,
-        Manifest.permission.READ_CONTACTS
-    )
+    val requiredPermissions = buildList {
+        add(Manifest.permission.READ_SMS)
+        add(Manifest.permission.SEND_SMS)
+        add(Manifest.permission.RECEIVE_SMS)
+        add(Manifest.permission.READ_CONTACTS)
+        // Android 13+ Notification 권한
+        if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
+            add(Manifest.permission.POST_NOTIFICATIONS)
+        }
+    }.toTypedArray()
 
     // 권한 요청 런처
     val permissionLauncher = rememberLauncherForActivityResult(
