@@ -19,8 +19,8 @@ import android.util.Log
 import android.widget.Toast
 
 /**
- * 외부 앱에서 SMS 전송 요청 시 사용되는 Activity
- * (예: 다른 앱에서 "메시지 공유" 선택 시)
+ * Activity used when external apps request SMS sending
+ * (e.g., when "Share message" is selected from another app)
  */
 @OptIn(ExperimentalMaterial3Api::class)
 class ComposeSmsActivity : ComponentActivity() {
@@ -30,7 +30,7 @@ class ComposeSmsActivity : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // Intent에서 수신자 주소 추출
+        // Extract recipient address from Intent
         recipientAddress = when (intent?.action) {
             Intent.ACTION_SENDTO, Intent.ACTION_VIEW -> {
                 intent.data?.schemeSpecificPart ?: ""

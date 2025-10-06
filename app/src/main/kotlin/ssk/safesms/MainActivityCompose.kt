@@ -37,7 +37,7 @@ import ssk.safesms.ui.theme.SafeSmsTheme
 
 class MainActivityCompose : ComponentActivity() {
 
-    // RoleManager를 사용한 기본 SMS 앱 요청 (Android 10+)
+    // Request default SMS app using RoleManager (Android 10+)
     private val roleManagerLauncher = registerForActivityResult(
         ActivityResultContracts.StartActivityForResult()
     ) { result ->
@@ -90,7 +90,7 @@ class MainActivityCompose : ComponentActivity() {
         Log.d("MainActivityCompose", "Android version: ${Build.VERSION.SDK_INT}")
 
         try {
-            // Android 10 (API 29) 이상: RoleManager 사용
+            // Android 10 (API 29) and above: Use RoleManager
             if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
                 val roleManager = getSystemService(Context.ROLE_SERVICE) as RoleManager
 
@@ -108,7 +108,7 @@ class MainActivityCompose : ComponentActivity() {
                     fallbackToSettings()
                 }
             }
-            // Android 4.4 ~ 9: ACTION_CHANGE_DEFAULT 사용
+            // Android 4.4 ~ 9: Use ACTION_CHANGE_DEFAULT
             else {
                 val intent = Intent(Telephony.Sms.Intents.ACTION_CHANGE_DEFAULT).apply {
                     putExtra(Telephony.Sms.Intents.EXTRA_PACKAGE_NAME, packageName)
@@ -131,7 +131,7 @@ class MainActivityCompose : ComponentActivity() {
     fun openSystemSettings() {
         try {
             Log.d("MainActivityCompose", "Opening system default apps settings")
-            // 기본 앱 설정 화면으로 직접 이동
+            // Navigate directly to default apps settings
             val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
                 Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS)
             } else {
@@ -157,16 +157,16 @@ class MainActivityCompose : ComponentActivity() {
     }
 }
 
-// 기본 SMS 앱인지 확인
+// Check if this app is the default SMS app
 private fun isDefaultSmsApp(context: Context): Boolean {
     return if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-        // Android 10+: RoleManager 사용
+        // Android 10+: Use RoleManager
         val roleManager = context.getSystemService(Context.ROLE_SERVICE) as? RoleManager
         val isDefault = roleManager?.isRoleHeld(RoleManager.ROLE_SMS) == true
         android.util.Log.d("SafeSmsApp", "RoleManager check - isDefault: $isDefault")
         isDefault
     } else {
-        // Android 9 이하: Telephony API 사용
+        // Android 9 and below: Use Telephony API
         val defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context)
         val isDefault = defaultSmsPackage == context.packageName
         android.util.Log.d("SafeSmsApp", "Telephony check - default: $defaultSmsPackage, ours: ${context.packageName}, isDefault: $isDefault")
@@ -186,19 +186,19 @@ fun SafeSmsApp(
     var settingClickCount by remember { mutableStateOf(0) }
     val lifecycleOwner = androidx.lifecycle.compose.LocalLifecycleOwner.current
 
-    // 필요한 권한 목록
+    // Required permissions list
     val requiredPermissions = buildList {
         add(Manifest.permission.READ_SMS)
         add(Manifest.permission.SEND_SMS)
         add(Manifest.permission.RECEIVE_SMS)
         add(Manifest.permission.READ_CONTACTS)
-        // Android 13+ Notification 권한
+        // Android 13+ Notification permission
         if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.TIRAMISU) {
             add(Manifest.permission.POST_NOTIFICATIONS)
         }
     }.toTypedArray()
 
-    // 권한 요청 런처
+    // Permission request launcher
     val permissionLauncher = rememberLauncherForActivityResult(
         contract = ActivityResultContracts.RequestMultiplePermissions()
     ) { permissions ->
@@ -209,7 +209,7 @@ fun SafeSmsApp(
         }
     }
 
-    // 앱 시작 시 권한 확인 및 요청
+    // Check and request permissions on app start
     LaunchedEffect(Unit) {
         val missingPermissions = requiredPermissions.filter {
             context.checkSelfPermission(it) != android.content.pm.PackageManager.PERMISSION_GRANTED
@@ -224,14 +224,14 @@ fun SafeSmsApp(
         }
     }
 
-    // 권한 허용 후 기본 SMS 앱인지 확인
+    // Check if default SMS app after permissions granted
     LaunchedEffect(permissionsGranted) {
         if (permissionsGranted) {
             showDefaultSmsDialog = !isDefaultSmsApp(context)
         }
     }
 
-    // onResume 시 기본 SMS 앱 상태 재확인
+    // Re-check default SMS app status on resume
     DisposableEffect(lifecycleOwner, permissionsGranted) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME && permissionsGranted) {
@@ -245,7 +245,7 @@ fun SafeSmsApp(
         }
     }
 
-    // 권한이 허용될 때까지 로딩 표시
+    // Show loading until permissions are granted
     if (!permissionsGranted) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -260,7 +260,7 @@ fun SafeSmsApp(
         return
     }
 
-    // 기본 앱이 아니면 전체 화면에 안내 메시지 표시
+    // Show full-screen guide if not default app
     if (showDefaultSmsDialog) {
         Box(
             modifier = Modifier.fillMaxSize(),
@@ -307,7 +307,7 @@ fun SafeSmsApp(
                         Text("Set as Default SMS App")
                     }
 
-                    // 3회 이상 클릭 시 직접 설정 버튼 표시
+                    // Show direct settings button after 3+ clicks
                     if (settingClickCount >= 3) {
                         OutlinedButton(
                             onClick = {
@@ -323,7 +323,7 @@ fun SafeSmsApp(
             }
         }
     } else {
-        // 기본 앱일 때만 NavHost 렌더링
+        // Render NavHost only when default app
         NavHost(
             navController = navController,
             startDestination = "sms_list",

@@ -39,12 +39,12 @@ fun SmsListScreen(
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
-    // 초기 로드
+    // Initial load
     LaunchedEffect(Unit) {
         viewModel.loadThreads()
     }
 
-    // Lifecycle aware - onResume에서 새로고침
+    // Lifecycle aware - refresh on resume
     DisposableEffect(lifecycleOwner) {
         val observer = LifecycleEventObserver { _, event ->
             if (event == Lifecycle.Event.ON_RESUME) {
@@ -59,14 +59,14 @@ fun SmsListScreen(
 
     val coroutineScope = rememberCoroutineScope()
 
-    // SMS 수신 감지
+    // Detect SMS reception
     DisposableEffect(context) {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 android.util.Log.d("SmsListScreen", "Broadcast received: ${intent?.action}")
                 if (intent?.action == SmsReceiver.ACTION_SMS_RECEIVED) {
                     android.util.Log.d("SmsListScreen", "Loading threads with delay...")
-                    // ContentProvider에 SMS가 완전히 저장될 때까지 대기
+                    // Wait for SMS to be fully saved to ContentProvider
                     coroutineScope.launch {
                         kotlinx.coroutines.delay(500)
                         viewModel.loadThreads()
@@ -77,7 +77,7 @@ fun SmsListScreen(
         val filter = IntentFilter(SmsReceiver.ACTION_SMS_RECEIVED)
 
         try {
-            // Android 13 이상에서는 RECEIVER_NOT_EXPORTED 필요
+            // Android 13+ requires RECEIVER_NOT_EXPORTED
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
             } else {

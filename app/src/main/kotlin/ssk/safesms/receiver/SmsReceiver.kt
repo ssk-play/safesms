@@ -10,8 +10,8 @@ import android.widget.Toast
 import ssk.safesms.notification.SmsNotificationManager
 
 /**
- * SMS 수신 BroadcastReceiver (기본 SMS 앱 전용)
- * SMS_DELIVER만 처리 - 직접 ContentProvider에 저장
+ * SMS receiving BroadcastReceiver (Default SMS app only)
+ * Handles SMS_DELIVER only - saves directly to ContentProvider
  */
 class SmsReceiver : BroadcastReceiver() {
 
@@ -29,7 +29,7 @@ class SmsReceiver : BroadcastReceiver() {
             return
         }
 
-        // Notification Manager 초기화
+        // Initialize Notification Manager
         val notificationManager = SmsNotificationManager(context)
 
         for (message in messages) {
@@ -40,7 +40,7 @@ class SmsReceiver : BroadcastReceiver() {
             Log.d("SmsReceiver", "Saving SMS from $address: $body")
 
             try {
-                // ContentProvider에 저장
+                // Save to ContentProvider
                 val values = ContentValues().apply {
                     put(Telephony.Sms.ADDRESS, address)
                     put(Telephony.Sms.BODY, body)
@@ -54,10 +54,10 @@ class SmsReceiver : BroadcastReceiver() {
                 val uri = context.contentResolver.insert(Telephony.Sms.Inbox.CONTENT_URI, values)
                 Log.d("SmsReceiver", "SMS saved to: $uri")
 
-                // threadId 추출
+                // Extract threadId
                 val threadId = uri?.lastPathSegment?.toLongOrNull() ?: -1L
 
-                // Notification 표시 (조건 확인 후)
+                // Show notification (after checking conditions)
                 notificationManager.showMessageNotification(
                     address = address,
                     message = body,
@@ -71,7 +71,7 @@ class SmsReceiver : BroadcastReceiver() {
             }
         }
 
-        // UI 업데이트 알림
+        // UI update notification
         val updateIntent = Intent(ACTION_SMS_RECEIVED).apply {
             setPackage(context.packageName)
         }

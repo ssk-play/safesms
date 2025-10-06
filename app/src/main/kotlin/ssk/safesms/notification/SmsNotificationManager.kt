@@ -16,9 +16,9 @@ import ssk.safesms.R
 import ssk.safesms.receiver.QuickReplyReceiver
 
 /**
- * 고급 SMS Notification 관리
- * - 읽지 않은 메시지 카운트
- * - 대화별 알림 채널
+ * Advanced SMS Notification Manager
+ * - Unread message count
+ * - Per-conversation notification channels
  * - Quick Reply
  * - Heads-up notification
  */
@@ -28,8 +28,8 @@ class SmsNotificationManager(private val context: Context) {
 
     companion object {
         private const val CHANNEL_ID = "sms_messages"
-        private const val CHANNEL_NAME = "SMS 메시지"
-        private const val CHANNEL_DESCRIPTION = "새로운 SMS 메시지 알림"
+        private const val CHANNEL_NAME = "SMS Messages"
+        private const val CHANNEL_DESCRIPTION = "New SMS message notifications"
 
         const val KEY_TEXT_REPLY = "key_text_reply"
         const val ACTION_REPLY = "ssk.safesms.ACTION_REPLY"
@@ -48,7 +48,7 @@ class SmsNotificationManager(private val context: Context) {
         }
 
         fun shouldShowNotification(messageAddress: String): Boolean {
-            // 백그라운드이거나, 다른 대화를 보고 있으면 알림 표시
+            // Show notification if in background or viewing a different conversation
             return !isAppInForeground || currentConversationAddress != messageAddress
         }
     }
@@ -92,7 +92,7 @@ class SmsNotificationManager(private val context: Context) {
         threadId: Long,
         unreadCount: Int
     ): Notification {
-        // 대화 열기 Intent
+        // Intent to open conversation
         val openIntent = Intent(context, MainActivityCompose::class.java).apply {
             flags = Intent.FLAG_ACTIVITY_NEW_TASK or Intent.FLAG_ACTIVITY_CLEAR_TOP
             putExtra("threadId", threadId)

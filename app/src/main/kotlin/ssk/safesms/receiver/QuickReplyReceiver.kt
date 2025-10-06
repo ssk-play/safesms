@@ -10,7 +10,7 @@ import androidx.core.app.RemoteInput
 import ssk.safesms.notification.SmsNotificationManager
 
 /**
- * Notification에서 Quick Reply 처리
+ * Handles Quick Reply from Notification
  */
 class QuickReplyReceiver : BroadcastReceiver() {
 
@@ -22,7 +22,7 @@ class QuickReplyReceiver : BroadcastReceiver() {
         val address = intent.getStringExtra(SmsNotificationManager.EXTRA_ADDRESS)
         val threadId = intent.getLongExtra(SmsNotificationManager.EXTRA_THREAD_ID, -1L)
 
-        // RemoteInput에서 답장 텍스트 추출
+        // Extract reply text from RemoteInput
         val remoteInput = RemoteInput.getResultsFromIntent(intent)
         val replyText = remoteInput?.getCharSequence(SmsNotificationManager.KEY_TEXT_REPLY)?.toString()
 
@@ -44,7 +44,7 @@ class QuickReplyReceiver : BroadcastReceiver() {
             smsManager.sendTextMessage(address, null, replyText, null, null)
             Log.d("QuickReplyReceiver", "Quick reply sent successfully")
 
-            // 알림 제거
+            // Remove notification
             val notificationManager = SmsNotificationManager(context)
             notificationManager.cancelNotification(address)
 

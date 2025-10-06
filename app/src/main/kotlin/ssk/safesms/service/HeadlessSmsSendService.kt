@@ -8,7 +8,7 @@ import android.telephony.SmsManager
 import android.util.Log
 
 /**
- * 전화 수신 시 빠른 응답(Quick Response)을 위한 서비스
+ * Service for Quick Response when receiving phone calls
  */
 class HeadlessSmsSendService : Service() {
 

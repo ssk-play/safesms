@@ -8,6 +8,6 @@ import android.util.Log
 class MmsReceiver : BroadcastReceiver() {
     override fun onReceive(context: Context, intent: Intent) {
         Log.d("MmsReceiver", "WAP Push received: ${intent.action}")
-        // MMS/WAP Push 처리 로직은 추후 구현
+        // MMS/WAP Push handling logic to be implemented later
     }
 }

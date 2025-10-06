@@ -44,11 +44,11 @@ fun ConversationScreen(
 
     LaunchedEffect(threadId, address) {
         viewModel.loadMessages(threadId)
-        // 현재 대화 설정
+        // Set current conversation
         SmsNotificationManager.setCurrentConversation(address)
     }
 
-    // 화면을 떠날 때 현재 대화 초기화
+    // Reset current conversation when leaving screen
     DisposableEffect(Unit) {
         onDispose {
             SmsNotificationManager.setCurrentConversation(null)
@@ -63,13 +63,13 @@ fun ConversationScreen(
         }
     }
 
-    // SMS 수신 감지
+    // Detect SMS reception
     DisposableEffect(context) {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == SmsReceiver.ACTION_SMS_RECEIVED) {
                     android.util.Log.d("ConversationScreen", "SMS received, reloading messages with delay")
-                    // ContentProvider에 SMS가 완전히 저장될 때까지 대기
+                    // Wait for SMS to be fully saved to ContentProvider
                     coroutineScope.launch {
                         kotlinx.coroutines.delay(500)
                         viewModel.loadMessages(threadId)
