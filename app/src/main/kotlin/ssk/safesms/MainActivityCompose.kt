@@ -63,7 +63,8 @@ class MainActivityCompose : ComponentActivity() {
                     color = MaterialTheme.colorScheme.background
                 ) {
                     SafeSmsApp(
-                        onRequestDefaultSmsApp = { requestDefaultSmsApp() }
+                        onRequestDefaultSmsApp = { requestDefaultSmsApp() },
+                        onOpenSystemSettings = { openSystemSettings() }
                     )
                 }
             }
@@ -115,16 +116,32 @@ class MainActivityCompose : ComponentActivity() {
         }
     }
 
-    private fun fallbackToSettings() {
+    fun openSystemSettings() {
         try {
-            Log.d("MainActivityCompose", "Opening system settings as fallback")
-            val intent = Intent(Settings.ACTION_SETTINGS)
+            Log.d("MainActivityCompose", "Opening system default apps settings")
+            // 기본 앱 설정 화면으로 직접 이동
+            val intent = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.LOLLIPOP) {
+                Intent(Settings.ACTION_MANAGE_DEFAULT_APPS_SETTINGS)
+            } else {
+                Intent(Settings.ACTION_SETTINGS)
+            }
             startActivity(intent)
-            Toast.makeText(this, "설정에서 '기본 앱 > SMS 앱'을 선택하여 SafeSms를 설정해주세요", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "SMS 앱을 선택하여 SafeSms를 설정해주세요", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
-            Log.e("MainActivityCompose", "Failed to open settings", e)
-            Toast.makeText(this, "설정을 열 수 없습니다", Toast.LENGTH_SHORT).show()
+            Log.e("MainActivityCompose", "Failed to open default apps settings, trying general settings", e)
+            try {
+                val intent = Intent(Settings.ACTION_SETTINGS)
+                startActivity(intent)
+                Toast.makeText(this, "설정에서 '기본 앱 > SMS 앱'을 선택하여 SafeSms를 설정해주세요", Toast.LENGTH_LONG).show()
+            } catch (e2: Exception) {
+                Log.e("MainActivityCompose", "Failed to open settings", e2)
+                Toast.makeText(this, "설정을 열 수 없습니다", Toast.LENGTH_SHORT).show()
+            }
         }
+    }
+
+    private fun fallbackToSettings() {
+        openSystemSettings()
     }
 }
 
@@ -147,7 +164,8 @@ private fun isDefaultSmsApp(context: Context): Boolean {
 
 @Composable
 fun SafeSmsApp(
-    onRequestDefaultSmsApp: () -> Unit
+    onRequestDefaultSmsApp: () -> Unit,
+    onOpenSystemSettings: () -> Unit
 ) {
     val context = LocalContext.current
     val navController = rememberNavController()
@@ -215,24 +233,39 @@ fun SafeSmsApp(
         AlertDialog(
             onDismissRequest = {
                 showDefaultSmsDialog = false
-                // dismiss 시에는 상태 저장하지 않음
             },
             title = { Text("기본 SMS 앱 설정") },
-            text = { Text("SafeSms를 기본 SMS 앱으로 설정하시겠습니까?\n\n기본 SMS 앱으로 설정하면 모든 SMS를 이 앱에서 받을 수 있습니다.") },
+            text = {
+                Column {
+                    Text("SafeSms를 기본 SMS 앱으로 설정하시겠습니까?")
+                    Spacer(modifier = Modifier.height(8.dp))
+                    Text(
+                        text = "기본 SMS 앱으로 설정하면 모든 SMS를 이 앱에서 받을 수 있습니다.",
+                        style = MaterialTheme.typography.bodyMedium
+                    )
+                }
+            },
             confirmButton = {
-                TextButton(onClick = {
-                    android.util.Log.d("SafeSmsApp", "User clicked 설정 button")
-                    showDefaultSmsDialog = false
-                    // "설정" 클릭 시에는 상태 저장하지 않음 - 실제 설정 완료 후 저장
-                    onRequestDefaultSmsApp()
-                }) {
-                    Text("설정")
+                Row {
+                    TextButton(onClick = {
+                        android.util.Log.d("SafeSmsApp", "User clicked 자동 설정 button")
+                        showDefaultSmsDialog = false
+                        onRequestDefaultSmsApp()
+                    }) {
+                        Text("자동 설정")
+                    }
+                    TextButton(onClick = {
+                        android.util.Log.d("SafeSmsApp", "User clicked 시스템 설정 button")
+                        showDefaultSmsDialog = false
+                        onOpenSystemSettings()
+                    }) {
+                        Text("시스템 설정")
+                    }
                 }
             },
             dismissButton = {
                 TextButton(onClick = {
                     showDefaultSmsDialog = false
-                    // "나중에" 클릭 시 일시적으로만 숨김 (다음 실행 시 다시 표시)
                 }) {
                     Text("나중에")
                 }
