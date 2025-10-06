@@ -153,14 +153,29 @@ fun SafeSmsApp(
     val context = LocalContext.current
     val navController = rememberNavController()
     var showDefaultSmsDialog by remember { mutableStateOf(false) }
+    var checkedDefaultSms by remember { mutableStateOf(false) }
 
     // 앱 시작 시 기본 SMS 앱인지 확인
     LaunchedEffect(Unit) {
-        val defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context)
-        android.util.Log.d("SafeSmsApp", "Current default SMS package: $defaultSmsPackage")
-        android.util.Log.d("SafeSmsApp", "Our package: ${context.packageName}")
-        if (defaultSmsPackage != context.packageName) {
-            showDefaultSmsDialog = true
+        if (!checkedDefaultSms) {
+            val isDefaultSmsApp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                // Android 10+: RoleManager 사용
+                val roleManager = context.getSystemService(Context.ROLE_SERVICE) as? RoleManager
+                val isDefault = roleManager?.isRoleHeld(RoleManager.ROLE_SMS) == true
+                android.util.Log.d("SafeSmsApp", "Using RoleManager - isRoleHeld: $isDefault")
+                isDefault
+            } else {
+                // Android 9 이하: Telephony API 사용
+                val defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context)
+                val isDefault = defaultSmsPackage == context.packageName
+                android.util.Log.d("SafeSmsApp", "Using Telephony - default: $defaultSmsPackage, ours: ${context.packageName}")
+                isDefault
+            }
+
+            checkedDefaultSms = true
+            if (!isDefaultSmsApp) {
+                showDefaultSmsDialog = true
+            }
         }
     }
 
