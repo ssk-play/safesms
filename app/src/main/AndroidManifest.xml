@@ -4,6 +4,7 @@
 
     <!-- SMS 권한 -->
     <uses-permission android:name="android.permission.READ_SMS" />
+    <uses-permission android:name="android.permission.WRITE_SMS" />
     <uses-permission android:name="android.permission.SEND_SMS" />
     <uses-permission android:name="android.permission.RECEIVE_SMS" />
     <uses-permission android:name="android.permission.READ_CONTACTS" />
@@ -33,13 +34,16 @@
 
         <!-- 기본 SMS 앱을 위한 필수 컴포넌트들 -->
 
-        <!-- SMS_DELIVER: SMS 수신 -->
+        <!-- SMS_DELIVER: SMS 수신 (기본 SMS 앱일 때) -->
         <receiver
             android:name=".receiver.SmsReceiver"
             android:exported="true"
             android:permission="android.permission.BROADCAST_SMS">
             <intent-filter android:priority="999">
                 <action android:name="android.provider.Telephony.SMS_DELIVER" />
+            </intent-filter>
+            <intent-filter android:priority="999">
+                <action android:name="android.provider.Telephony.SMS_RECEIVED" />
             </intent-filter>
         </receiver>
 
