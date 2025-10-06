@@ -49,11 +49,9 @@ class SmsReceiver : BroadcastReceiver() {
 
                 val uri = context.contentResolver.insert(Telephony.Sms.Inbox.CONTENT_URI, values)
                 Log.d("SmsReceiver", "SMS saved to: $uri")
-
-                Toast.makeText(context, "SafeSms: 새 메시지 ($address)", Toast.LENGTH_SHORT).show()
             } catch (e: Exception) {
                 Log.e("SmsReceiver", "Failed to save SMS", e)
-                Toast.makeText(context, "SMS 저장 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+                Toast.makeText(context, "SMS 저장 실패: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
 
