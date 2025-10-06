@@ -245,29 +245,29 @@ fun SafeSmsApp(
                     )
                 }
             },
-            confirmButton = {
+            dismissButton = {
                 Row {
                     TextButton(onClick = {
-                        android.util.Log.d("SafeSmsApp", "User clicked 자동 설정 button")
                         showDefaultSmsDialog = false
-                        onRequestDefaultSmsApp()
                     }) {
-                        Text("자동 설정")
+                        Text("나중에")
                     }
                     TextButton(onClick = {
-                        android.util.Log.d("SafeSmsApp", "User clicked 시스템 설정 button")
+                        android.util.Log.d("SafeSmsApp", "User clicked 직접 설정 button")
                         showDefaultSmsDialog = false
                         onOpenSystemSettings()
                     }) {
-                        Text("시스템 설정")
+                        Text("직접 설정")
                     }
                 }
             },
-            dismissButton = {
+            confirmButton = {
                 TextButton(onClick = {
+                    android.util.Log.d("SafeSmsApp", "User clicked 설정 button")
                     showDefaultSmsDialog = false
+                    onRequestDefaultSmsApp()
                 }) {
-                    Text("나중에")
+                    Text("설정")
                 }
             }
         )
