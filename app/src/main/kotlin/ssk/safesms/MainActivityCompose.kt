@@ -11,16 +11,15 @@ import android.provider.Telephony
 import android.util.Log
 import android.widget.Toast
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
 import androidx.activity.result.contract.ActivityResultContracts
-import androidx.compose.foundation.layout.fillMaxSize
-import androidx.compose.material3.AlertDialog
-import androidx.compose.material3.MaterialTheme
-import androidx.compose.material3.Surface
-import androidx.compose.material3.Text
-import androidx.compose.material3.TextButton
+import androidx.compose.foundation.layout.*
+import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
+import androidx.compose.ui.unit.dp
 import androidx.compose.ui.platform.LocalContext
 import androidx.lifecycle.viewmodel.compose.viewModel
 import androidx.navigation.NavType
@@ -35,24 +34,6 @@ import ssk.safesms.ui.screens.SmsListScreen
 import ssk.safesms.ui.theme.SafeSmsTheme
 
 class MainActivityCompose : ComponentActivity() {
-
-    private val requiredPermissions = arrayOf(
-        Manifest.permission.READ_SMS,
-        Manifest.permission.SEND_SMS,
-        Manifest.permission.RECEIVE_SMS,
-        Manifest.permission.READ_CONTACTS
-    )
-
-    private val permissionLauncher = registerForActivityResult(
-        ActivityResultContracts.RequestMultiplePermissions()
-    ) { permissions ->
-        val allGranted = permissions.values.all { it }
-        if (allGranted) {
-            Toast.makeText(this, "권한이 허용되었습니다", Toast.LENGTH_SHORT).show()
-        } else {
-            Toast.makeText(this, "SMS 기능을 사용하려면 권한이 필요합니다", Toast.LENGTH_LONG).show()
-        }
-    }
 
     // RoleManager를 사용한 기본 SMS 앱 요청 (Android 10+)
     private val roleManagerLauncher = registerForActivityResult(
@@ -71,9 +52,6 @@ class MainActivityCompose : ComponentActivity() {
     override fun onCreate(savedInstanceState: Bundle?) {
         super.onCreate(savedInstanceState)
 
-        // 필요한 권한만 요청
-        checkAndRequestPermissions()
-
         setContent {
             SafeSmsTheme {
                 Surface(
@@ -85,19 +63,6 @@ class MainActivityCompose : ComponentActivity() {
                     )
                 }
             }
-        }
-    }
-
-    private fun checkAndRequestPermissions() {
-        val missingPermissions = requiredPermissions.filter {
-            checkSelfPermission(it) != android.content.pm.PackageManager.PERMISSION_GRANTED
-        }
-
-        if (missingPermissions.isNotEmpty()) {
-            Log.d("MainActivityCompose", "Requesting ${missingPermissions.size} permissions")
-            permissionLauncher.launch(missingPermissions.toTypedArray())
-        } else {
-            Log.d("MainActivityCompose", "All permissions already granted")
         }
     }
 
@@ -166,32 +131,69 @@ fun SafeSmsApp(
     val context = LocalContext.current
     val navController = rememberNavController()
     var showDefaultSmsDialog by remember { mutableStateOf(false) }
+    var permissionsGranted by remember { mutableStateOf(false) }
 
-    // 앱 시작 시 기본 SMS 앱인지 확인 (한 번만)
+    // 필요한 권한 목록
+    val requiredPermissions = arrayOf(
+        Manifest.permission.READ_SMS,
+        Manifest.permission.SEND_SMS,
+        Manifest.permission.RECEIVE_SMS,
+        Manifest.permission.READ_CONTACTS
+    )
+
+    // 권한 요청 런처
+    val permissionLauncher = rememberLauncherForActivityResult(
+        contract = ActivityResultContracts.RequestMultiplePermissions()
+    ) { permissions ->
+        val allGranted = permissions.values.all { it }
+        permissionsGranted = allGranted
+        if (!allGranted) {
+            Toast.makeText(context, "SMS 기능을 사용하려면 권한이 필요합니다", Toast.LENGTH_LONG).show()
+        }
+    }
+
+    // 앱 시작 시 권한 확인 및 요청
     LaunchedEffect(Unit) {
-        val prefs = context.getSharedPreferences("safesms_prefs", Context.MODE_PRIVATE)
-        val alreadyAsked = prefs.getBoolean("default_sms_asked", false)
+        val missingPermissions = requiredPermissions.filter {
+            context.checkSelfPermission(it) != android.content.pm.PackageManager.PERMISSION_GRANTED
+        }
 
-        if (!alreadyAsked) {
-            val isDefaultSmsApp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
-                // Android 10+: RoleManager 사용
-                val roleManager = context.getSystemService(Context.ROLE_SERVICE) as? RoleManager
-                val isDefault = roleManager?.isRoleHeld(RoleManager.ROLE_SMS) == true
-                android.util.Log.d("SafeSmsApp", "Using RoleManager - isRoleHeld: $isDefault")
-                isDefault
-            } else {
-                // Android 9 이하: Telephony API 사용
-                val defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context)
-                val isDefault = defaultSmsPackage == context.packageName
-                android.util.Log.d("SafeSmsApp", "Using Telephony - default: $defaultSmsPackage, ours: ${context.packageName}")
-                isDefault
-            }
+        if (missingPermissions.isEmpty()) {
+            android.util.Log.d("SafeSmsApp", "All permissions already granted")
+            permissionsGranted = true
+        } else {
+            android.util.Log.d("SafeSmsApp", "Requesting ${missingPermissions.size} permissions")
+            permissionLauncher.launch(missingPermissions.toTypedArray())
+        }
+    }
 
-            if (!isDefaultSmsApp) {
-                showDefaultSmsDialog = true
-            } else {
-                // 이미 기본 앱이면 다시 묻지 않음
-                prefs.edit().putBoolean("default_sms_asked", true).apply()
+    // 권한 허용 후 기본 SMS 앱인지 확인 (한 번만)
+    LaunchedEffect(permissionsGranted) {
+        if (permissionsGranted) {
+            val prefs = context.getSharedPreferences("safesms_prefs", Context.MODE_PRIVATE)
+            val alreadyAsked = prefs.getBoolean("default_sms_asked", false)
+
+            if (!alreadyAsked) {
+                val isDefaultSmsApp = if (Build.VERSION.SDK_INT >= Build.VERSION_CODES.Q) {
+                    // Android 10+: RoleManager 사용
+                    val roleManager = context.getSystemService(Context.ROLE_SERVICE) as? RoleManager
+                    val isDefault = roleManager?.isRoleHeld(RoleManager.ROLE_SMS) == true
+                    android.util.Log.d("SafeSmsApp", "Using RoleManager - isRoleHeld: $isDefault")
+                    isDefault
+                } else {
+                    // Android 9 이하: Telephony API 사용
+                    val defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context)
+                    val isDefault = defaultSmsPackage == context.packageName
+                    android.util.Log.d("SafeSmsApp", "Using Telephony - default: $defaultSmsPackage, ours: ${context.packageName}")
+                    isDefault
+                }
+
+                if (!isDefaultSmsApp) {
+                    showDefaultSmsDialog = true
+                } else {
+                    // 이미 기본 앱이면 다시 묻지 않음
+                    prefs.edit().putBoolean("default_sms_asked", true).apply()
+                }
             }
         }
     }
@@ -230,6 +232,21 @@ fun SafeSmsApp(
                 }
             }
         )
+    }
+
+    // 권한이 허용될 때까지 로딩 표시
+    if (!permissionsGranted) {
+        Box(
+            modifier = Modifier.fillMaxSize(),
+            contentAlignment = Alignment.Center
+        ) {
+            Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                CircularProgressIndicator()
+                Spacer(modifier = Modifier.height(16.dp))
+                Text("권한 확인 중...")
+            }
+        }
+        return
     }
 
     NavHost(
