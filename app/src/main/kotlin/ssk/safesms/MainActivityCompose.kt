@@ -247,8 +247,8 @@ fun SafeSmsApp(
         return
     }
 
-    Column(modifier = Modifier.fillMaxSize()) {
-        // 기본 SMS 앱 설정 배너 (여기에 렌더링)
+    // 배너 컴포저블
+    val banner: @Composable () -> Unit = {
         if (showDefaultSmsDialog) {
             Card(
                 modifier = Modifier
@@ -322,21 +322,23 @@ fun SafeSmsApp(
                 }
             }
         }
+    }
 
-        NavHost(
-            navController = navController,
-            startDestination = "sms_list",
-            modifier = Modifier.fillMaxSize()
-        ) {
-            composable("sms_list") {
-                val viewModel: HomeViewModel = viewModel()
-                SmsListScreen(
-                    viewModel = viewModel,
-                    onThreadClick = { thread ->
-                        navController.navigate("conversation/${thread.threadId}/${thread.address}")
-                    }
-                )
-            }
+    NavHost(
+        navController = navController,
+        startDestination = "sms_list",
+        modifier = Modifier.fillMaxSize()
+    ) {
+        composable("sms_list") {
+            val viewModel: HomeViewModel = viewModel()
+            SmsListScreen(
+                banner = banner,
+                viewModel = viewModel,
+                onThreadClick = { thread ->
+                    navController.navigate("conversation/${thread.threadId}/${thread.address}")
+                }
+            )
+        }
 
         composable(
             route = "conversation/{threadId}/{address}",
@@ -350,12 +352,12 @@ fun SafeSmsApp(
             val viewModel: ConversationViewModel = viewModel()
 
             ConversationScreen(
+                banner = banner,
                 threadId = threadId,
                 address = address,
                 viewModel = viewModel,
                 onBackClick = { navController.popBackStack() }
             )
         }
-    }
     }
 }

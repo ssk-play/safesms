@@ -32,6 +32,7 @@ import java.util.*
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun SmsListScreen(
+    banner: @Composable () -> Unit = {},
     viewModel: HomeViewModel = viewModel(),
     onThreadClick: (SmsThread) -> Unit
 ) {
@@ -110,27 +111,31 @@ fun SmsListScreen(
             )
         }
     ) { paddingValues ->
-        if (threads.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("메시지가 없습니다")
-            }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                items(threads) { thread ->
-                    SmsThreadItem(
-                        thread = thread,
-                        onClick = { onThreadClick(thread) }
-                    )
-                    HorizontalDivider()
+        Column(
+            modifier = Modifier
+                .fillMaxSize()
+                .padding(paddingValues)
+        ) {
+            banner()
+
+            if (threads.isEmpty()) {
+                Box(
+                    modifier = Modifier.fillMaxSize(),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("메시지가 없습니다")
+                }
+            } else {
+                LazyColumn(
+                    modifier = Modifier.fillMaxSize()
+                ) {
+                    items(threads) { thread ->
+                        SmsThreadItem(
+                            thread = thread,
+                            onClick = { onThreadClick(thread) }
+                        )
+                        HorizontalDivider()
+                    }
                 }
             }
         }
