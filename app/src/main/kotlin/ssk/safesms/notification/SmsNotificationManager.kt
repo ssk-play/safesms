@@ -107,7 +107,7 @@ class SmsNotificationManager(private val context: Context) {
 
         // Quick Reply RemoteInput
         val remoteInput = RemoteInput.Builder(KEY_TEXT_REPLY)
-            .setLabel("답장")
+            .setLabel("Reply")
             .build()
 
         // Quick Reply Intent
@@ -125,7 +125,7 @@ class SmsNotificationManager(private val context: Context) {
 
         val replyAction = NotificationCompat.Action.Builder(
             R.drawable.ic_launcher_foreground,
-            "답장",
+            "Reply",
             replyPendingIntent
         )
             .addRemoteInput(remoteInput)
@@ -140,7 +140,7 @@ class SmsNotificationManager(private val context: Context) {
 
         // MessagingStyle
         val messagingStyle = NotificationCompat.MessagingStyle(
-            Person.Builder().setName("나").build()
+            Person.Builder().setName("Me").build()
         )
             .setConversationTitle(address)
             .addMessage(message, System.currentTimeMillis(), sender)

@@ -67,7 +67,7 @@ class SmsReceiver : BroadcastReceiver() {
 
             } catch (e: Exception) {
                 Log.e("SmsReceiver", "Failed to save SMS", e)
-                Toast.makeText(context, "SMS 저장 실패: ${e.message}", Toast.LENGTH_LONG).show()
+                Toast.makeText(context, "Failed to save SMS: ${e.message}", Toast.LENGTH_LONG).show()
             }
         }
 

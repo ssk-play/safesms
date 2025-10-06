@@ -46,10 +46,10 @@ class MainActivityCompose : ComponentActivity() {
             val isDefaultSmsApp = roleManager.isRoleHeld(RoleManager.ROLE_SMS)
 
             if (isDefaultSmsApp) {
-                Toast.makeText(this, "SafeSms가 기본 SMS 앱으로 설정되었습니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "SafeSms is now the default SMS app", Toast.LENGTH_SHORT).show()
                 Log.d("MainActivityCompose", "Default SMS app set successfully")
             } else {
-                Toast.makeText(this, "기본 SMS 앱으로 설정되지 않았습니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Not set as default SMS app", Toast.LENGTH_SHORT).show()
                 Log.d("MainActivityCompose", "User did not set as default SMS app")
             }
         }
@@ -101,7 +101,7 @@ class MainActivityCompose : ComponentActivity() {
                         roleManagerLauncher.launch(intent)
                     } else {
                         Log.d("MainActivityCompose", "Already default SMS app")
-                        Toast.makeText(this, "이미 기본 SMS 앱입니다", Toast.LENGTH_SHORT).show()
+                        Toast.makeText(this, "Already set as default SMS app", Toast.LENGTH_SHORT).show()
                     }
                 } else {
                     Log.e("MainActivityCompose", "SMS role not available")
@@ -138,16 +138,16 @@ class MainActivityCompose : ComponentActivity() {
                 Intent(Settings.ACTION_SETTINGS)
             }
             startActivity(intent)
-            Toast.makeText(this, "SMS 앱을 선택하여 SafeSms를 설정해주세요", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Please select SafeSms as your SMS app", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
             Log.e("MainActivityCompose", "Failed to open default apps settings, trying general settings", e)
             try {
                 val intent = Intent(Settings.ACTION_SETTINGS)
                 startActivity(intent)
-                Toast.makeText(this, "설정에서 '기본 앱 > SMS 앱'을 선택하여 SafeSms를 설정해주세요", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Go to Settings > Default apps > SMS app and select SafeSms", Toast.LENGTH_LONG).show()
             } catch (e2: Exception) {
                 Log.e("MainActivityCompose", "Failed to open settings", e2)
-                Toast.makeText(this, "설정을 열 수 없습니다", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "Unable to open settings", Toast.LENGTH_SHORT).show()
             }
         }
     }
@@ -205,7 +205,7 @@ fun SafeSmsApp(
         val allGranted = permissions.values.all { it }
         permissionsGranted = allGranted
         if (!allGranted) {
-            Toast.makeText(context, "SMS 기능을 사용하려면 권한이 필요합니다", Toast.LENGTH_LONG).show()
+            Toast.makeText(context, "Permissions are required to use SMS features", Toast.LENGTH_LONG).show()
         }
     }
 
@@ -254,7 +254,7 @@ fun SafeSmsApp(
             Column(horizontalAlignment = Alignment.CenterHorizontally) {
                 CircularProgressIndicator()
                 Spacer(modifier = Modifier.height(16.dp))
-                Text("권한 확인 중...")
+                Text("Checking permissions...")
             }
         }
         return
@@ -289,7 +289,7 @@ fun SafeSmsApp(
                     )
 
                     Text(
-                        text = "기본 SMS 앱으로 설정해야\n모든 기능을 사용할 수 있습니다.",
+                        text = "You must set SafeSms as your default SMS app\nto use all features.",
                         style = MaterialTheme.typography.titleMedium,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
                     )
@@ -304,19 +304,19 @@ fun SafeSmsApp(
                         },
                         modifier = Modifier.fillMaxWidth()
                     ) {
-                        Text("기본 SMS 앱으로 설정")
+                        Text("Set as Default SMS App")
                     }
 
                     // 3회 이상 클릭 시 직접 설정 버튼 표시
                     if (settingClickCount >= 3) {
                         OutlinedButton(
                             onClick = {
-                                Log.d("SafeSmsApp", "User clicked 직접 설정 button")
+                                Log.d("SafeSmsApp", "User clicked direct settings button")
                                 onOpenSystemSettings()
                             },
                             modifier = Modifier.fillMaxWidth()
                         ) {
-                            Text("시스템 설정에서 직접 설정")
+                            Text("Open System Settings")
                         }
                     }
                 }

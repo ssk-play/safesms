@@ -63,11 +63,11 @@ class ComposeSmsActivity : ComponentActivity() {
         try {
             val smsManager = SmsManager.getDefault()
             smsManager.sendTextMessage(recipient, null, message, null, null)
-            Toast.makeText(this, "전송 완료", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Message sent", Toast.LENGTH_SHORT).show()
             finish()
         } catch (e: Exception) {
             Log.e("ComposeSmsActivity", "Failed to send SMS", e)
-            Toast.makeText(this, "전송 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(this, "Failed to send: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 }
@@ -86,10 +86,10 @@ fun ComposeSmsScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text("새 메시지") },
+                title = { Text("New Message") },
                 navigationIcon = {
                     IconButton(onClick = onBack) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "뒤로")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
                     }
                 },
                 actions = {
@@ -101,7 +101,7 @@ fun ComposeSmsScreen(
                         },
                         enabled = recipient.isNotBlank() && message.isNotBlank()
                     ) {
-                        Icon(Icons.AutoMirrored.Filled.Send, "전송")
+                        Icon(Icons.AutoMirrored.Filled.Send, "Send")
                     }
                 }
             )
@@ -117,7 +117,7 @@ fun ComposeSmsScreen(
             OutlinedTextField(
                 value = recipient,
                 onValueChange = { recipient = it },
-                label = { Text("받는 사람") },
+                label = { Text("To") },
                 modifier = Modifier.fillMaxWidth(),
                 enabled = initialRecipient.isEmpty()
             )
@@ -125,7 +125,7 @@ fun ComposeSmsScreen(
             OutlinedTextField(
                 value = message,
                 onValueChange = { message = it },
-                label = { Text("메시지") },
+                label = { Text("Message") },
                 modifier = Modifier
                     .fillMaxWidth()
                     .weight(1f),

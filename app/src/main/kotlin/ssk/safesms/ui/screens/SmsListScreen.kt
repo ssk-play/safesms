@@ -104,7 +104,7 @@ fun SmsListScreen(
                 title = { Text("SafeSms") },
                 actions = {
                     IconButton(onClick = { viewModel.loadThreads() }) {
-                        Icon(Icons.Default.Refresh, contentDescription = "새로고침")
+                        Icon(Icons.Default.Refresh, contentDescription = "Refresh")
                     }
                 }
             )
@@ -117,7 +117,7 @@ fun SmsListScreen(
                     .padding(paddingValues),
                 contentAlignment = Alignment.Center
             ) {
-                Text("메시지가 없습니다")
+                Text("No messages")
             }
         } else {
             LazyColumn(
@@ -185,8 +185,8 @@ private fun formatDate(timestamp: Long): String {
     val diff = now.time - date.time
 
     return when {
-        diff < 60000 -> "방금 전"
-        diff < 3600000 -> "${diff / 60000}분 전"
+        diff < 60000 -> "Just now"
+        diff < 3600000 -> "${diff / 60000}m ago"
         diff < 86400000 -> {
             SimpleDateFormat("HH:mm", Locale.getDefault()).format(date)
         }

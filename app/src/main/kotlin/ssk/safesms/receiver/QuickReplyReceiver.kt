@@ -50,7 +50,7 @@ class QuickReplyReceiver : BroadcastReceiver() {
 
         } catch (e: Exception) {
             Log.e("QuickReplyReceiver", "Failed to send quick reply", e)
-            Toast.makeText(context, "답장 전송 실패: ${e.message}", Toast.LENGTH_SHORT).show()
+            Toast.makeText(context, "Failed to send reply: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
 }

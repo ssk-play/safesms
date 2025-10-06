@@ -104,7 +104,7 @@ fun ConversationScreen(
                 title = { Text(address) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
-                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "뒤로")
+                        Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")
                     }
                 }
             )
@@ -123,7 +123,7 @@ fun ConversationScreen(
                         value = messageText,
                         onValueChange = { messageText = it },
                         modifier = Modifier.weight(1f),
-                        placeholder = { Text("메시지 입력") },
+                        placeholder = { Text("Message") },
                         maxLines = 4
                     )
                     Spacer(modifier = Modifier.width(8.dp))
@@ -135,7 +135,7 @@ fun ConversationScreen(
                             }
                         }
                     ) {
-                        Icon(Icons.AutoMirrored.Filled.Send, "전송")
+                        Icon(Icons.AutoMirrored.Filled.Send, "Send")
                     }
                 }
             }
