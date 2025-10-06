@@ -42,6 +42,9 @@ class MainActivity : AppCompatActivity() {
         binding = ActivityMainBinding.inflate(layoutInflater)
         setContentView(binding.root)
 
+        // Toolbar 설정
+        setSupportActionBar(binding.toolbar)
+
         checkAndRequestPermissions()
 
         val navView: BottomNavigationView = binding.navView
