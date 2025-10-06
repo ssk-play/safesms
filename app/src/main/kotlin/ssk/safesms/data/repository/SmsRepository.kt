@@ -10,50 +10,67 @@ import ssk.safesms.data.model.SmsThread
 class SmsRepository(private val context: Context) {
 
     fun getAllThreads(): List<SmsThread> {
-        val threads = mutableListOf<SmsThread>()
-        val uri = Uri.parse("content://sms/conversations?simple=true")
-        val projection = arrayOf("thread_id", "address", "snippet", "date", "msg_count", "read")
+        val threadsMap = mutableMapOf<Long, SmsThread>()
+        val uri = Telephony.Sms.CONTENT_URI
+        val projection = arrayOf(
+            Telephony.Sms._ID,
+            Telephony.Sms.THREAD_ID,
+            Telephony.Sms.ADDRESS,
+            Telephony.Sms.BODY,
+            Telephony.Sms.DATE,
+            Telephony.Sms.READ
+        )
 
-        context.contentResolver.query(uri, projection, null, null, "date DESC")?.use { cursor ->
-            val threadIdIndex = cursor.getColumnIndexOrThrow("thread_id")
-            val addressIndex = cursor.getColumnIndexOrThrow("address")
-            val snippetIndex = cursor.getColumnIndexOrThrow("snippet")
-            val dateIndex = cursor.getColumnIndexOrThrow("date")
-            val msgCountIndex = cursor.getColumnIndexOrThrow("msg_count")
-            val readIndex = cursor.getColumnIndexOrThrow("read")
+        context.contentResolver.query(uri, projection, null, null, "${Telephony.Sms.DATE} DESC")?.use { cursor ->
+            val threadIdIndex = cursor.getColumnIndexOrThrow(Telephony.Sms.THREAD_ID)
+            val addressIndex = cursor.getColumnIndexOrThrow(Telephony.Sms.ADDRESS)
+            val bodyIndex = cursor.getColumnIndexOrThrow(Telephony.Sms.BODY)
+            val dateIndex = cursor.getColumnIndexOrThrow(Telephony.Sms.DATE)
+            val readIndex = cursor.getColumnIndexOrThrow(Telephony.Sms.READ)
 
             while (cursor.moveToNext()) {
-                threads.add(
-                    SmsThread(
-                        threadId = cursor.getLong(threadIdIndex),
+                val threadId = cursor.getLong(threadIdIndex)
+
+                // Only keep the most recent message per thread
+                if (!threadsMap.containsKey(threadId)) {
+                    threadsMap[threadId] = SmsThread(
+                        threadId = threadId,
                         address = cursor.getString(addressIndex) ?: "",
-                        snippet = cursor.getString(snippetIndex) ?: "",
+                        snippet = cursor.getString(bodyIndex) ?: "",
                         date = cursor.getLong(dateIndex),
-                        messageCount = cursor.getInt(msgCountIndex),
+                        messageCount = 0, // Will be updated later if needed
                         read = cursor.getInt(readIndex) == 1
                     )
-                )
+                }
             }
         }
 
-        return threads
+        return threadsMap.values.sortedByDescending { it.date }
     }
 
     fun getMessagesInThread(threadId: Long): List<SmsMessage> {
         val messages = mutableListOf<SmsMessage>()
-        val uri = Uri.parse("content://sms/")
-        val projection = arrayOf("_id", "thread_id", "address", "body", "date", "type", "read")
-        val selection = "thread_id = ?"
+        val uri = Telephony.Sms.CONTENT_URI
+        val projection = arrayOf(
+            Telephony.Sms._ID,
+            Telephony.Sms.THREAD_ID,
+            Telephony.Sms.ADDRESS,
+            Telephony.Sms.BODY,
+            Telephony.Sms.DATE,
+            Telephony.Sms.TYPE,
+            Telephony.Sms.READ
+        )
+        val selection = "${Telephony.Sms.THREAD_ID} = ?"
         val selectionArgs = arrayOf(threadId.toString())
 
-        context.contentResolver.query(uri, projection, selection, selectionArgs, "date ASC")?.use { cursor ->
-            val idIndex = cursor.getColumnIndexOrThrow("_id")
-            val threadIdIndex = cursor.getColumnIndexOrThrow("thread_id")
-            val addressIndex = cursor.getColumnIndexOrThrow("address")
-            val bodyIndex = cursor.getColumnIndexOrThrow("body")
-            val dateIndex = cursor.getColumnIndexOrThrow("date")
-            val typeIndex = cursor.getColumnIndexOrThrow("type")
-            val readIndex = cursor.getColumnIndexOrThrow("read")
+        context.contentResolver.query(uri, projection, selection, selectionArgs, "${Telephony.Sms.DATE} ASC")?.use { cursor ->
+            val idIndex = cursor.getColumnIndexOrThrow(Telephony.Sms._ID)
+            val threadIdIndex = cursor.getColumnIndexOrThrow(Telephony.Sms.THREAD_ID)
+            val addressIndex = cursor.getColumnIndexOrThrow(Telephony.Sms.ADDRESS)
+            val bodyIndex = cursor.getColumnIndexOrThrow(Telephony.Sms.BODY)
+            val dateIndex = cursor.getColumnIndexOrThrow(Telephony.Sms.DATE)
+            val typeIndex = cursor.getColumnIndexOrThrow(Telephony.Sms.TYPE)
+            val readIndex = cursor.getColumnIndexOrThrow(Telephony.Sms.READ)
 
             while (cursor.moveToNext()) {
                 messages.add(
