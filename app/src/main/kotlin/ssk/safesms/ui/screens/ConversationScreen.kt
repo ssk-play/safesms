@@ -21,6 +21,7 @@ import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
 import androidx.lifecycle.viewmodel.compose.viewModel
+import kotlinx.coroutines.launch
 import ssk.safesms.data.model.SmsMessage
 import ssk.safesms.receiver.SmsReceiver
 import ssk.safesms.ui.conversation.ConversationViewModel
@@ -44,6 +45,8 @@ fun ConversationScreen(
         viewModel.loadMessages(threadId)
     }
 
+    val coroutineScope = rememberCoroutineScope()
+
     LaunchedEffect(messages.size) {
         if (messages.isNotEmpty()) {
             listState.animateScrollToItem(messages.size - 1)
@@ -55,8 +58,12 @@ fun ConversationScreen(
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 if (intent?.action == SmsReceiver.ACTION_SMS_RECEIVED) {
-                    android.util.Log.d("ConversationScreen", "SMS received, reloading messages")
-                    viewModel.loadMessages(threadId)
+                    android.util.Log.d("ConversationScreen", "SMS received, reloading messages with delay")
+                    // ContentProvider에 SMS가 완전히 저장될 때까지 대기
+                    coroutineScope.launch {
+                        kotlinx.coroutines.delay(500)
+                        viewModel.loadMessages(threadId)
+                    }
                 }
             }
         }

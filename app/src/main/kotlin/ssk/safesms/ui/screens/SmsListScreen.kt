@@ -57,14 +57,20 @@ fun SmsListScreen(
         }
     }
 
+    val coroutineScope = rememberCoroutineScope()
+
     // SMS 수신 감지
     DisposableEffect(context) {
         val receiver = object : BroadcastReceiver() {
             override fun onReceive(context: Context?, intent: Intent?) {
                 android.util.Log.d("SmsListScreen", "Broadcast received: ${intent?.action}")
                 if (intent?.action == SmsReceiver.ACTION_SMS_RECEIVED) {
-                    android.util.Log.d("SmsListScreen", "Loading threads...")
-                    viewModel.loadThreads()
+                    android.util.Log.d("SmsListScreen", "Loading threads with delay...")
+                    // ContentProvider에 SMS가 완전히 저장될 때까지 대기
+                    coroutineScope.launch {
+                        kotlinx.coroutines.delay(500)
+                        viewModel.loadThreads()
+                    }
                 }
             }
         }
