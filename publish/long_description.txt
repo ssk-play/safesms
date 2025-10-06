@@ -16,7 +16,6 @@ Traditional SMS apps make every URL, phone number, and address clickable - turni
 • Send and receive text messages
 • Threaded conversation view
 • Message notifications with Quick Reply
-• Clean Material 3 design
 • No ads, no tracking, no data collection
 
 WHY SAFESMS?
