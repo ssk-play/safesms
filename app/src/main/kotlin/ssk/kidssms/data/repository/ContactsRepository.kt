@@ -1,6 +1,7 @@
 package ssk.kidssms.data.repository
 
 import android.content.Context
+import android.net.Uri
 import android.provider.ContactsContract
 import android.util.Log
 
@@ -13,21 +14,31 @@ class ContactsRepository(private val context: Context) {
     fun getContactName(phoneNumber: String): String? {
         if (phoneNumber.isBlank()) return null
 
-        val uri = ContactsContract.CommonDataKinds.Phone.CONTENT_URI
-        val projection = arrayOf(
-            ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME
+        // Use PhoneLookup for better phone number matching
+        val uri = Uri.withAppendedPath(
+            ContactsContract.PhoneLookup.CONTENT_FILTER_URI,
+            Uri.encode(phoneNumber)
         )
-        val selection = "${ContactsContract.CommonDataKinds.Phone.NUMBER} = ?"
-        val selectionArgs = arrayOf(phoneNumber)
+        val projection = arrayOf(
+            ContactsContract.PhoneLookup.DISPLAY_NAME
+        )
 
         return try {
-            context.contentResolver.query(uri, projection, selection, selectionArgs, null)?.use { cursor ->
+            context.contentResolver.query(uri, projection, null, null, null)?.use { cursor ->
                 if (cursor.moveToFirst()) {
-                    val nameIndex = cursor.getColumnIndex(ContactsContract.CommonDataKinds.Phone.DISPLAY_NAME)
+                    val nameIndex = cursor.getColumnIndex(ContactsContract.PhoneLookup.DISPLAY_NAME)
                     if (nameIndex >= 0) {
-                        cursor.getString(nameIndex)
-                    } else null
-                } else null
+                        val name = cursor.getString(nameIndex)
+                        Log.d("ContactsRepository", "Found contact name '$name' for $phoneNumber")
+                        name
+                    } else {
+                        Log.d("ContactsRepository", "Display name column not found")
+                        null
+                    }
+                } else {
+                    Log.d("ContactsRepository", "No contact found for $phoneNumber")
+                    null
+                }
             }
         } catch (e: Exception) {
             Log.e("ContactsRepository", "Failed to get contact name for $phoneNumber", e)
