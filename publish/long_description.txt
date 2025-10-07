@@ -1,7 +1,5 @@
 Kids SMS - Safe Messaging
 
-THE STORY
-
 This app was born from a real parenting challenge. I use Family Link to manage my children's screen time, but SMS and phone apps must always be accessible for emergencies. However, I discovered that links in text messages could open web browsers, completely bypassing the time restrictions.
 
 When I announced I would create an SMS app that blocks all links, my daughter declared: "Dad, if you make that app, I will definitely find a way to break it!"
