@@ -5,26 +5,37 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- White rounded square background for better visibility in adaptive icon -->
-    <path
-        android:fillColor="#FFFFFF"
-        android:pathData="M24,24 L84,24 Q90,24 90,30 L90,78 Q90,84 84,84 L24,84 Q18,84 18,78 L18,30 Q18,24 24,24 Z"/>
+    <!-- Scale and position to match app_icon.svg layout -->
+    <!-- KIDS text at y=230 (around 48 in 108 viewport) -->
+    <!-- SMS text at y=340 (around 72 in 108 viewport) -->
 
-    <!-- KIDS text in blue/cyan gradient colors -->
-    <group
-        android:translateX="32"
-        android:translateY="42">
-        <path
-            android:fillColor="#2196F3"
-            android:pathData="M0,0 L3,0 L3,12 L0,12 Z M0,0 L8,12 L5,12 L0,3 Z M8,0 L11,0 L11,12 L8,12 Z M14,0 L20,0 Q22,0 22,2 L22,5 Q22,7 20,7 L17,7 L17,5 L20,5 L20,2 L14,2 L14,12 L17,12 L17,10 L20,10 L20,7 Q22,7 22,10 L22,12 L14,12 Z M25,0 L28,0 L28,12 L25,12 Z M31,0 L37,0 L37,2 L31,2 L31,5 L37,5 L37,7 L31,7 L31,10 L37,10 L37,12 L31,12 Z"/>
-    </group>
+    <!-- K -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M22,40 L28,40 L28,58 L22,58 Z"/>
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M22,48 L35,40 L42,40 L28,49 L42,58 L35,58 Z"/>
 
-    <!-- SMS text in blue/cyan gradient colors -->
-    <group
-        android:translateX="32"
-        android:translateY="62">
-        <path
-            android:fillColor="#00BCD4"
-            android:pathData="M0,0 L8,0 Q10,0 10,2 L10,3 L8,3 L8,2 L0,2 L0,3 Q0,4 2,4 L6,4 Q10,4 10,7 L10,10 Q10,12 8,12 L0,12 Q-2,12 -2,10 L-2,9 L0,9 L0,10 L8,10 L8,9 Q8,8 6,8 L2,8 Q0,8 0,7 L0,2 Q0,0 2,0 Z M13,0 L16,0 L16,6 L20,0 L23,0 L23,12 L20,12 L20,6 L16,12 L13,12 Z M26,0 L32,0 L32,2 L26,2 L26,5 L32,5 L32,7 L26,7 L26,10 L32,10 L32,12 L26,12 Z"/>
-    </group>
+    <!-- I -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M46,40 L52,40 L52,58 L46,58 Z"/>
+
+    <!-- D -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M56,40 L62,40 L62,58 L56,58 Z M62,40 L68,40 Q72,40 74,43 Q76,46 76,49 Q76,52 74,55 Q72,58 68,58 L62,58 Z"/>
+
+    <!-- S -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M80,40 Q76,40 76,44 L82,44 Q82,42 84,42 L90,42 Q92,42 92,44 Q92,46 90,46 L84,46 Q80,46 78,48 Q76,50 76,54 Q76,58 80,58 L90,58 Q94,58 94,54 L88,54 Q88,56 86,56 L82,56 Q80,56 80,54 Q80,52 82,52 L88,52 Q92,52 94,50 Q96,48 96,44 Q96,40 92,40 Z"/>
+
+    <!-- M (SMS) -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M30,66 L36,66 L36,84 L30,84 Z M36,66 L42,76 L48,66 L48,84 L42,84 L42,76 L36,84 Z M48,66 L54,66 L54,84 L48,84 Z"/>
+
+    <!-- S (SMS) -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M58,66 Q54,66 54,70 L60,70 Q60,68 62,68 L68,68 Q70,68 70,70 Q70,72 68,72 L62,72 Q58,72 56,74 Q54,76 54,80 Q54,84 58,84 L68,84 Q72,84 72,80 L66,80 Q66,82 64,82 L60,82 Q58,82 58,80 Q58,78 60,78 L66,78 Q70,78 72,76 Q74,74 74,70 Q74,66 70,66 Z"/>
+
+    <!-- S (SMS second S) -->
+    <path android:fillColor="#FFFFFF"
+        android:pathData="M78,66 Q74,66 74,70 L80,70 Q80,68 82,68 L88,68 Q90,68 90,70 Q90,72 88,72 L82,72 Q78,72 76,74 Q74,76 74,80 Q74,84 78,84 L88,84 Q92,84 92,80 L86,80 Q86,82 84,82 L80,82 Q78,82 78,80 Q78,78 80,78 L86,78 Q90,78 92,76 Q94,74 94,70 Q94,66 90,66 Z"/>
 </vector>
