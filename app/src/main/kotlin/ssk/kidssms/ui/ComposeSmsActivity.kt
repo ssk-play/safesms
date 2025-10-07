@@ -1,13 +1,18 @@
 package ssk.kidssms.ui
 
 import android.content.Intent
+import android.net.Uri
 import android.os.Bundle
+import android.provider.ContactsContract
 import androidx.activity.ComponentActivity
+import androidx.activity.compose.rememberLauncherForActivityResult
 import androidx.activity.compose.setContent
+import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
+import androidx.compose.material.icons.filled.Person
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
 import androidx.compose.ui.Alignment
@@ -47,13 +52,33 @@ class ComposeSmsActivity : ComponentActivity() {
 
         setContent {
             KidsSMSTheme {
+                var currentRecipient by remember { mutableStateOf(recipientAddress) }
+
+                val contactPickerLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartActivityForResult()
+                ) { result ->
+                    if (result.resultCode == RESULT_OK) {
+                        result.data?.data?.let { contactUri ->
+                            val phoneNumber = getPhoneNumberFromContact(contactUri)
+                            if (phoneNumber != null) {
+                                currentRecipient = phoneNumber
+                            }
+                        }
+                    }
+                }
+
                 ComposeSmsScreen(
-                    initialRecipient = recipientAddress,
+                    recipient = currentRecipient,
+                    onRecipientChange = { currentRecipient = it },
                     initialMessage = initialMessage,
                     onSend = { recipient, message ->
                         sendSms(recipient, message)
                     },
-                    onBack = { finish() }
+                    onBack = { finish() },
+                    onContactPick = {
+                        val intent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+                        contactPickerLauncher.launch(intent)
+                    }
                 )
             }
         }
@@ -70,18 +95,38 @@ class ComposeSmsActivity : ComponentActivity() {
             Toast.makeText(this, "Failed to send: ${e.message}", Toast.LENGTH_SHORT).show()
         }
     }
+
+    private fun getPhoneNumberFromContact(contactUri: Uri): String? {
+        val cursor = contentResolver.query(
+            contactUri,
+            arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
+            null,
+            null,
+            null
+        )
+        return cursor?.use {
+            if (it.moveToFirst()) {
+                val numberIndex = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+                if (numberIndex >= 0) {
+                    it.getString(numberIndex)
+                } else null
+            } else null
+        }
+    }
 }
 
 @OptIn(ExperimentalMaterial3Api::class)
 @Composable
 fun ComposeSmsScreen(
-    initialRecipient: String,
+    recipient: String,
+    onRecipientChange: (String) -> Unit,
     initialMessage: String,
     onSend: (String, String) -> Unit,
-    onBack: () -> Unit
+    onBack: () -> Unit,
+    onContactPick: (() -> Unit)? = null
 ) {
-    var recipient by remember { mutableStateOf(initialRecipient) }
     var message by remember { mutableStateOf(initialMessage) }
+    val recipientReadOnly = recipient.isNotEmpty() && initialMessage.isNotEmpty()
 
     Scaffold(
         topBar = {
@@ -116,10 +161,17 @@ fun ComposeSmsScreen(
         ) {
             OutlinedTextField(
                 value = recipient,
-                onValueChange = { recipient = it },
+                onValueChange = onRecipientChange,
                 label = { Text("To") },
                 modifier = Modifier.fillMaxWidth(),
-                enabled = initialRecipient.isEmpty()
+                enabled = !recipientReadOnly,
+                trailingIcon = if (onContactPick != null && !recipientReadOnly) {
+                    {
+                        IconButton(onClick = onContactPick) {
+                            Icon(Icons.Default.Person, contentDescription = "Pick Contact")
+                        }
+                    }
+                } else null
             )
 
             OutlinedTextField(

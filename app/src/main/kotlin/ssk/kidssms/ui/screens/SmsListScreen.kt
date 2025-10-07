@@ -9,6 +9,7 @@ import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.material.icons.Icons
+import androidx.compose.material.icons.filled.Add
 import androidx.compose.material.icons.filled.Refresh
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
@@ -33,7 +34,8 @@ import java.util.*
 @Composable
 fun SmsListScreen(
     viewModel: HomeViewModel = viewModel(),
-    onThreadClick: (SmsThread) -> Unit
+    onThreadClick: (SmsThread) -> Unit,
+    onNewMessageClick: () -> Unit = {}
 ) {
     val threads by viewModel.threads.observeAsState(emptyList())
     val context = LocalContext.current
@@ -108,6 +110,11 @@ fun SmsListScreen(
                     }
                 }
             )
+        },
+        floatingActionButton = {
+            FloatingActionButton(onClick = onNewMessageClick) {
+                Icon(Icons.Default.Add, contentDescription = "New Message")
+            }
         }
     ) { paddingValues ->
         if (threads.isEmpty()) {

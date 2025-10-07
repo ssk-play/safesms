@@ -34,6 +34,10 @@ import ssk.kidssms.ui.home.HomeViewModel
 import ssk.kidssms.ui.screens.ConversationScreen
 import ssk.kidssms.ui.screens.SmsListScreen
 import ssk.kidssms.ui.theme.KidsSMSTheme
+import ssk.kidssms.ui.ComposeSmsScreen
+import android.telephony.SmsManager
+import android.provider.ContactsContract
+import android.net.Uri
 
 class MainActivityCompose : ComponentActivity() {
 
@@ -154,6 +158,25 @@ class MainActivityCompose : ComponentActivity() {
 
     private fun fallbackToSettings() {
         openSystemSettings()
+    }
+}
+
+// Get phone number from contact URI
+private fun getPhoneNumberFromContact(context: Context, contactUri: Uri): String? {
+    val cursor = context.contentResolver.query(
+        contactUri,
+        arrayOf(ContactsContract.CommonDataKinds.Phone.NUMBER),
+        null,
+        null,
+        null
+    )
+    return cursor?.use {
+        if (it.moveToFirst()) {
+            val numberIndex = it.getColumnIndex(ContactsContract.CommonDataKinds.Phone.NUMBER)
+            if (numberIndex >= 0) {
+                it.getString(numberIndex)
+            } else null
+        } else null
     }
 }
 
@@ -335,6 +358,48 @@ fun KidsSmsApp(
                     viewModel = viewModel,
                     onThreadClick = { thread ->
                         navController.navigate("conversation/${thread.threadId}/${thread.address}")
+                    },
+                    onNewMessageClick = {
+                        navController.navigate("compose_new")
+                    }
+                )
+            }
+
+            composable("compose_new") {
+                var recipient by remember { mutableStateOf("") }
+
+                val contactPickerLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartActivityForResult()
+                ) { result ->
+                    if (result.resultCode == ComponentActivity.RESULT_OK) {
+                        result.data?.data?.let { contactUri ->
+                            val phoneNumber = getPhoneNumberFromContact(context, contactUri)
+                            if (phoneNumber != null) {
+                                recipient = phoneNumber
+                            }
+                        }
+                    }
+                }
+
+                ComposeSmsScreen(
+                    recipient = recipient,
+                    onRecipientChange = { recipient = it },
+                    initialMessage = "",
+                    onSend = { recipientValue, message ->
+                        try {
+                            val smsManager = SmsManager.getDefault()
+                            smsManager.sendTextMessage(recipientValue, null, message, null, null)
+                            Toast.makeText(context, "Message sent", Toast.LENGTH_SHORT).show()
+                            navController.popBackStack()
+                        } catch (e: Exception) {
+                            Log.e("KidsSmsApp", "Failed to send SMS", e)
+                            Toast.makeText(context, "Failed to send: ${e.message}", Toast.LENGTH_SHORT).show()
+                        }
+                    },
+                    onBack = { navController.popBackStack() },
+                    onContactPick = {
+                        val intent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+                        contactPickerLauncher.launch(intent)
                     }
                 )
             }
