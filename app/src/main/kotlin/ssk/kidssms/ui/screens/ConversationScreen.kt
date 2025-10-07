@@ -43,7 +43,8 @@ fun ConversationScreen(
     threadId: Long,
     address: String,
     viewModel: ConversationViewModel = viewModel(),
-    onBackClick: () -> Unit
+    onBackClick: () -> Unit,
+    onForwardMessage: (String) -> Unit = {}
 ) {
     val messages by viewModel.messages.observeAsState(emptyList())
     var messageText by remember { mutableStateOf("") }
@@ -194,9 +195,9 @@ fun ConversationScreen(
                     showTextSelectionDialog = true
                 },
                 onForward = { msg ->
-                    // TODO: Implement forward
-                    Toast.makeText(context, "Forward not yet implemented", Toast.LENGTH_SHORT).show()
                     showBottomSheet = false
+                    selectedMessage = null
+                    onForwardMessage(msg.body)
                 },
                 onDelete = { msg ->
                     showBottomSheet = false

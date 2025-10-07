@@ -433,7 +433,67 @@ fun KidsSmsApp(
                     threadId = threadId,
                     address = address,
                     viewModel = viewModel,
-                    onBackClick = { navController.popBackStack() }
+                    onBackClick = { navController.popBackStack() },
+                    onForwardMessage = { message ->
+                        val encodedMessage = Uri.encode(message)
+                        navController.navigate("forward/$encodedMessage")
+                    }
+                )
+            }
+
+            composable(
+                route = "forward/{message}",
+                arguments = listOf(
+                    navArgument("message") { type = NavType.StringType }
+                )
+            ) { backStackEntry ->
+                val encodedMessage = backStackEntry.arguments?.getString("message") ?: ""
+                val message = Uri.decode(encodedMessage)
+                var recipient by remember { mutableStateOf("") }
+                val coroutineScope = rememberCoroutineScope()
+
+                val contactPickerLauncher = rememberLauncherForActivityResult(
+                    contract = ActivityResultContracts.StartActivityForResult()
+                ) { result ->
+                    if (result.resultCode == ComponentActivity.RESULT_OK) {
+                        result.data?.data?.let { contactUri ->
+                            val phoneNumber = getPhoneNumberFromContact(context, contactUri)
+                            if (phoneNumber != null) {
+                                recipient = phoneNumber
+                            }
+                        }
+                    }
+                }
+
+                ComposeSmsScreen(
+                    recipient = recipient,
+                    onRecipientChange = { recipient = it },
+                    initialMessage = message,
+                    onSend = { recipientValue, messageValue ->
+                        coroutineScope.launch {
+                            try {
+                                val repository = SmsRepository(context)
+                                val success = withContext(Dispatchers.IO) {
+                                    repository.sendSms(recipientValue, messageValue)
+                                }
+
+                                if (success) {
+                                    Toast.makeText(context, "Message forwarded", Toast.LENGTH_SHORT).show()
+                                    navController.popBackStack()
+                                } else {
+                                    Toast.makeText(context, "Failed to forward message", Toast.LENGTH_SHORT).show()
+                                }
+                            } catch (e: Exception) {
+                                Log.e("KidsSmsApp", "Failed to forward SMS", e)
+                                Toast.makeText(context, "Failed to forward: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
+                        }
+                    },
+                    onBack = { navController.popBackStack() },
+                    onContactPick = {
+                        val intent = Intent(Intent.ACTION_PICK, ContactsContract.CommonDataKinds.Phone.CONTENT_URI)
+                        contactPickerLauncher.launch(intent)
+                    }
                 )
             }
         }
