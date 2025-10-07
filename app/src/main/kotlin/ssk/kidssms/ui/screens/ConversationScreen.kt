@@ -48,6 +48,10 @@ fun ConversationScreen(
     val listState = rememberLazyListState()
     val context = LocalContext.current
 
+    var selectedMessage by remember { mutableStateOf<SmsMessage?>(null) }
+    var showBottomSheet by remember { mutableStateOf(false) }
+    val bottomSheetState = rememberModalBottomSheetState()
+
     LaunchedEffect(threadId, address) {
         viewModel.loadMessages(threadId)
         // Set current conversation
@@ -156,17 +160,66 @@ fun ConversationScreen(
             verticalArrangement = Arrangement.spacedBy(4.dp)
         ) {
             items(messages) { message ->
-                MessageItem(message = message)
+                MessageItem(
+                    message = message,
+                    onLongClick = {
+                        selectedMessage = message
+                        showBottomSheet = true
+                    }
+                )
             }
+        }
+
+        if (showBottomSheet && selectedMessage != null) {
+            MessageOptionsBottomSheet(
+                message = selectedMessage!!,
+                sheetState = bottomSheetState,
+                onDismiss = {
+                    showBottomSheet = false
+                    selectedMessage = null
+                },
+                onCopyText = { msg ->
+                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText("SMS Message", msg.body)
+                    clipboard.setPrimaryClip(clip)
+                    Toast.makeText(context, "Message copied", Toast.LENGTH_SHORT).show()
+                    showBottomSheet = false
+                },
+                onSelectText = { msg ->
+                    // TODO: Implement text selection
+                    Toast.makeText(context, "Text selection not yet implemented", Toast.LENGTH_SHORT).show()
+                    showBottomSheet = false
+                },
+                onForward = { msg ->
+                    // TODO: Implement forward
+                    Toast.makeText(context, "Forward not yet implemented", Toast.LENGTH_SHORT).show()
+                    showBottomSheet = false
+                },
+                onShare = { msg ->
+                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
+                        type = "text/plain"
+                        putExtra(Intent.EXTRA_TEXT, msg.body)
+                    }
+                    context.startActivity(Intent.createChooser(shareIntent, "Share message"))
+                    showBottomSheet = false
+                },
+                onDelete = { msg ->
+                    // TODO: Implement delete
+                    Toast.makeText(context, "Delete not yet implemented", Toast.LENGTH_SHORT).show()
+                    showBottomSheet = false
+                }
+            )
         }
     }
 }
 
 @OptIn(ExperimentalFoundationApi::class)
 @Composable
-fun MessageItem(message: SmsMessage) {
+fun MessageItem(
+    message: SmsMessage,
+    onLongClick: () -> Unit
+) {
     val isSent = message.type == SmsMessage.TYPE_SENT
-    val context = LocalContext.current
 
     Row(
         modifier = Modifier
@@ -188,13 +241,7 @@ fun MessageItem(message: SmsMessage) {
                     .widthIn(max = 280.dp)
                     .combinedClickable(
                         onClick = { /* No action on regular click */ },
-                        onLongClick = {
-                            // Copy message to clipboard
-                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
-                            val clip = ClipData.newPlainText("SMS Message", message.body)
-                            clipboard.setPrimaryClip(clip)
-                            Toast.makeText(context, "Message copied", Toast.LENGTH_SHORT).show()
-                        },
+                        onLongClick = onLongClick,
                         indication = null,
                         interactionSource = remember { MutableInteractionSource() }
                     )
@@ -219,5 +266,79 @@ fun MessageItem(message: SmsMessage) {
                 modifier = Modifier.padding(horizontal = 4.dp, vertical = 2.dp)
             )
         }
+    }
+}
+
+@OptIn(ExperimentalMaterial3Api::class)
+@Composable
+fun MessageOptionsBottomSheet(
+    message: SmsMessage,
+    sheetState: SheetState,
+    onDismiss: () -> Unit,
+    onCopyText: (SmsMessage) -> Unit,
+    onSelectText: (SmsMessage) -> Unit,
+    onForward: (SmsMessage) -> Unit,
+    onShare: (SmsMessage) -> Unit,
+    onDelete: (SmsMessage) -> Unit
+) {
+    ModalBottomSheet(
+        onDismissRequest = onDismiss,
+        sheetState = sheetState
+    ) {
+        Column(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(bottom = 32.dp)
+        ) {
+            Text(
+                text = "Message Options",
+                style = MaterialTheme.typography.titleMedium,
+                modifier = Modifier.padding(horizontal = 16.dp, vertical = 8.dp)
+            )
+
+            HorizontalDivider()
+
+            MessageOptionItem(
+                text = "텍스트 선택",
+                onClick = { onSelectText(message) }
+            )
+
+            MessageOptionItem(
+                text = "텍스트 복사",
+                onClick = { onCopyText(message) }
+            )
+
+            MessageOptionItem(
+                text = "전달",
+                onClick = { onForward(message) }
+            )
+
+            MessageOptionItem(
+                text = "공유",
+                onClick = { onShare(message) }
+            )
+
+            MessageOptionItem(
+                text = "삭제",
+                onClick = { onDelete(message) }
+            )
+        }
+    }
+}
+
+@Composable
+fun MessageOptionItem(
+    text: String,
+    onClick: () -> Unit
+) {
+    Surface(
+        onClick = onClick,
+        modifier = Modifier.fillMaxWidth()
+    ) {
+        Text(
+            text = text,
+            style = MaterialTheme.typography.bodyLarge,
+            modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
+        )
     }
 }
