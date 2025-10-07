@@ -16,6 +16,7 @@ import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
 import androidx.compose.foundation.lazy.rememberLazyListState
 import androidx.compose.foundation.shape.RoundedCornerShape
+import androidx.compose.foundation.text.selection.SelectionContainer
 import androidx.compose.material.icons.Icons
 import androidx.compose.material.icons.automirrored.filled.ArrowBack
 import androidx.compose.material.icons.automirrored.filled.Send
@@ -26,6 +27,7 @@ import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
 import androidx.compose.ui.unit.dp
+import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import ssk.kidssms.data.model.SmsMessage
@@ -51,6 +53,7 @@ fun ConversationScreen(
     var selectedMessage by remember { mutableStateOf<SmsMessage?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
     val bottomSheetState = rememberModalBottomSheetState()
+    var showTextSelectionDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(threadId, address) {
         viewModel.loadMessages(threadId)
@@ -186,9 +189,8 @@ fun ConversationScreen(
                     showBottomSheet = false
                 },
                 onSelectText = { msg ->
-                    // TODO: Implement text selection
-                    Toast.makeText(context, "Text selection not yet implemented", Toast.LENGTH_SHORT).show()
                     showBottomSheet = false
+                    showTextSelectionDialog = true
                 },
                 onForward = { msg ->
                     // TODO: Implement forward
@@ -199,6 +201,16 @@ fun ConversationScreen(
                     // TODO: Implement delete
                     Toast.makeText(context, "Delete not yet implemented", Toast.LENGTH_SHORT).show()
                     showBottomSheet = false
+                }
+            )
+        }
+
+        if (showTextSelectionDialog && selectedMessage != null) {
+            TextSelectionDialog(
+                message = selectedMessage!!,
+                onDismiss = {
+                    showTextSelectionDialog = false
+                    selectedMessage = null
                 }
             )
         }
@@ -326,5 +338,51 @@ fun MessageOptionItem(
             style = MaterialTheme.typography.bodyLarge,
             modifier = Modifier.padding(horizontal = 16.dp, vertical = 16.dp)
         )
+    }
+}
+
+@Composable
+fun TextSelectionDialog(
+    message: SmsMessage,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+            ) {
+                Text(
+                    text = "Select Text",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                SelectionContainer {
+                    Text(
+                        text = message.body,
+                        style = MaterialTheme.typography.bodyLarge,
+                        modifier = Modifier.padding(vertical = 8.dp)
+                    )
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("Close")
+                    }
+                }
+            }
+        }
     }
 }
