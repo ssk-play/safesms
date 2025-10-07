@@ -5,37 +5,19 @@
     android:viewportWidth="108"
     android:viewportHeight="108">
 
-    <!-- Scale and position to match app_icon.svg layout -->
-    <!-- KIDS text at y=230 (around 48 in 108 viewport) -->
-    <!-- SMS text at y=340 (around 72 in 108 viewport) -->
+    <!-- Message bubble icon - scaled to 70% -->
+    <path
+        android:fillColor="#FFFFFF"
+        android:pathData="M33,39 L75,39 Q79,39 79,43 L79,60 Q79,64 75,64 L46,64 L33,72 L33,64 Q29,64 29,60 L29,43 Q29,39 33,39 Z"/>
 
-    <!-- K -->
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M22,40 L28,40 L28,58 L22,58 Z"/>
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M22,48 L35,40 L42,40 L28,49 L42,58 L35,58 Z"/>
-
-    <!-- I -->
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M46,40 L52,40 L52,58 L46,58 Z"/>
-
-    <!-- D -->
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M56,40 L62,40 L62,58 L56,58 Z M62,40 L68,40 Q72,40 74,43 Q76,46 76,49 Q76,52 74,55 Q72,58 68,58 L62,58 Z"/>
-
-    <!-- S -->
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M80,40 Q76,40 76,44 L82,44 Q82,42 84,42 L90,42 Q92,42 92,44 Q92,46 90,46 L84,46 Q80,46 78,48 Q76,50 76,54 Q76,58 80,58 L90,58 Q94,58 94,54 L88,54 Q88,56 86,56 L82,56 Q80,56 80,54 Q80,52 82,52 L88,52 Q92,52 94,50 Q96,48 96,44 Q96,40 92,40 Z"/>
-
-    <!-- M (SMS) -->
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M30,66 L36,66 L36,84 L30,84 Z M36,66 L42,76 L48,66 L48,84 L42,84 L42,76 L36,84 Z M48,66 L54,66 L54,84 L48,84 Z"/>
-
-    <!-- S (SMS) -->
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M58,66 Q54,66 54,70 L60,70 Q60,68 62,68 L68,68 Q70,68 70,70 Q70,72 68,72 L62,72 Q58,72 56,74 Q54,76 54,80 Q54,84 58,84 L68,84 Q72,84 72,80 L66,80 Q66,82 64,82 L60,82 Q58,82 58,80 Q58,78 60,78 L66,78 Q70,78 72,76 Q74,74 74,70 Q74,66 70,66 Z"/>
-
-    <!-- S (SMS second S) -->
-    <path android:fillColor="#FFFFFF"
-        android:pathData="M78,66 Q74,66 74,70 L80,70 Q80,68 82,68 L88,68 Q90,68 90,70 Q90,72 88,72 L82,72 Q78,72 76,74 Q74,76 74,80 Q74,84 78,84 L88,84 Q92,84 92,80 L86,80 Q86,82 84,82 L80,82 Q78,82 78,80 Q78,78 80,78 L86,78 Q90,78 92,76 Q94,74 94,70 Q94,66 90,66 Z"/>
+    <!-- Three dots inside message bubble - scaled to 70% -->
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M43,51 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0"/>
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M54,51 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0"/>
+    <path
+        android:fillColor="#2196F3"
+        android:pathData="M65,51 m-3,0 a3,3 0,1 1,6 0 a3,3 0,1 1,-6 0"/>
 </vector>

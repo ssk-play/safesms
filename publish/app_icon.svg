@@ -8,14 +8,15 @@
     </linearGradient>
   </defs>
 
-  <!-- Background -->
+  <!-- Background with rounded corners -->
   <rect width="512" height="512" fill="url(#grad1)" rx="80"/>
 
-  <!-- Text: KIDS -->
-  <text x="256" y="230" font-family="Arial, sans-serif" font-size="110" font-weight="bold"
-        fill="white" text-anchor="middle">KIDS</text>
+  <!-- Message bubble -->
+  <path d="M 120 160 L 390 160 Q 420 160 420 190 L 420 310 Q 420 340 390 340 L 210 340 L 120 400 L 120 340 Q 90 340 90 310 L 90 190 Q 90 160 120 160 Z"
+        fill="white"/>
 
-  <!-- Text: SMS -->
-  <text x="256" y="340" font-family="Arial, sans-serif" font-size="110" font-weight="bold"
-        fill="white" text-anchor="middle">SMS</text>
+  <!-- Three dots inside message bubble -->
+  <circle cx="190" cy="250" r="18" fill="#2196F3"/>
+  <circle cx="256" cy="250" r="18" fill="#2196F3"/>
+  <circle cx="322" cy="250" r="18" fill="#2196F3"/>
 </svg>
