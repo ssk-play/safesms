@@ -19,9 +19,13 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.unit.dp
 import ssk.kidssms.ui.theme.KidsSMSTheme
-import android.telephony.SmsManager
 import android.util.Log
 import android.widget.Toast
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import ssk.kidssms.data.repository.SmsRepository
+import androidx.lifecycle.lifecycleScope
 
 /**
  * Activity used when external apps request SMS sending
@@ -85,14 +89,23 @@ class ComposeSmsActivity : ComponentActivity() {
     }
 
     private fun sendSms(recipient: String, message: String) {
-        try {
-            val smsManager = SmsManager.getDefault()
-            smsManager.sendTextMessage(recipient, null, message, null, null)
-            Toast.makeText(this, "Message sent", Toast.LENGTH_SHORT).show()
-            finish()
-        } catch (e: Exception) {
-            Log.e("ComposeSmsActivity", "Failed to send SMS", e)
-            Toast.makeText(this, "Failed to send: ${e.message}", Toast.LENGTH_SHORT).show()
+        lifecycleScope.launch {
+            try {
+                val repository = SmsRepository(applicationContext)
+                val success = withContext(Dispatchers.IO) {
+                    repository.sendSms(recipient, message)
+                }
+
+                if (success) {
+                    Toast.makeText(this@ComposeSmsActivity, "Message sent", Toast.LENGTH_SHORT).show()
+                    finish()
+                } else {
+                    Toast.makeText(this@ComposeSmsActivity, "Failed to send message", Toast.LENGTH_SHORT).show()
+                }
+            } catch (e: Exception) {
+                Log.e("ComposeSmsActivity", "Failed to send SMS", e)
+                Toast.makeText(this@ComposeSmsActivity, "Failed to send: ${e.message}", Toast.LENGTH_SHORT).show()
+            }
         }
     }
 

@@ -1,9 +1,11 @@
 package ssk.kidssms.data.repository
 
+import android.content.ContentValues
 import android.content.Context
 import android.net.Uri
 import android.provider.Telephony
 import android.telephony.SmsManager
+import android.util.Log
 import ssk.kidssms.data.model.SmsMessage
 import ssk.kidssms.data.model.SmsThread
 
@@ -94,8 +96,23 @@ class SmsRepository(private val context: Context) {
         return try {
             val smsManager = context.getSystemService(SmsManager::class.java)
             smsManager.sendTextMessage(phoneNumber, null, message, null, null)
+
+            // Save sent message to ContentProvider
+            val values = ContentValues().apply {
+                put(Telephony.Sms.ADDRESS, phoneNumber)
+                put(Telephony.Sms.BODY, message)
+                put(Telephony.Sms.DATE, System.currentTimeMillis())
+                put(Telephony.Sms.READ, 1)
+                put(Telephony.Sms.TYPE, Telephony.Sms.MESSAGE_TYPE_SENT)
+                put(Telephony.Sms.SEEN, 1)
+            }
+
+            val uri = context.contentResolver.insert(Telephony.Sms.Sent.CONTENT_URI, values)
+            Log.d("SmsRepository", "Sent message saved to ContentProvider: $uri")
+
             true
         } catch (e: Exception) {
+            Log.e("SmsRepository", "Failed to send SMS", e)
             e.printStackTrace()
             false
         }

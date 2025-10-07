@@ -17,6 +17,7 @@ import androidx.activity.result.contract.ActivityResultContracts
 import androidx.compose.foundation.layout.*
 import androidx.compose.material3.*
 import androidx.compose.runtime.*
+import androidx.compose.runtime.rememberCoroutineScope
 import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.text.font.FontWeight
@@ -35,9 +36,12 @@ import ssk.kidssms.ui.screens.ConversationScreen
 import ssk.kidssms.ui.screens.SmsListScreen
 import ssk.kidssms.ui.theme.KidsSMSTheme
 import ssk.kidssms.ui.ComposeSmsScreen
-import android.telephony.SmsManager
 import android.provider.ContactsContract
 import android.net.Uri
+import kotlinx.coroutines.Dispatchers
+import kotlinx.coroutines.launch
+import kotlinx.coroutines.withContext
+import ssk.kidssms.data.repository.SmsRepository
 
 class MainActivityCompose : ComponentActivity() {
 
@@ -367,6 +371,7 @@ fun KidsSmsApp(
 
             composable("compose_new") {
                 var recipient by remember { mutableStateOf("") }
+                val coroutineScope = rememberCoroutineScope()
 
                 val contactPickerLauncher = rememberLauncherForActivityResult(
                     contract = ActivityResultContracts.StartActivityForResult()
@@ -386,14 +391,23 @@ fun KidsSmsApp(
                     onRecipientChange = { recipient = it },
                     initialMessage = "",
                     onSend = { recipientValue, message ->
-                        try {
-                            val smsManager = SmsManager.getDefault()
-                            smsManager.sendTextMessage(recipientValue, null, message, null, null)
-                            Toast.makeText(context, "Message sent", Toast.LENGTH_SHORT).show()
-                            navController.popBackStack()
-                        } catch (e: Exception) {
-                            Log.e("KidsSmsApp", "Failed to send SMS", e)
-                            Toast.makeText(context, "Failed to send: ${e.message}", Toast.LENGTH_SHORT).show()
+                        coroutineScope.launch {
+                            try {
+                                val repository = SmsRepository(context)
+                                val success = withContext(Dispatchers.IO) {
+                                    repository.sendSms(recipientValue, message)
+                                }
+
+                                if (success) {
+                                    Toast.makeText(context, "Message sent", Toast.LENGTH_SHORT).show()
+                                    navController.popBackStack()
+                                } else {
+                                    Toast.makeText(context, "Failed to send message", Toast.LENGTH_SHORT).show()
+                                }
+                            } catch (e: Exception) {
+                                Log.e("KidsSmsApp", "Failed to send SMS", e)
+                                Toast.makeText(context, "Failed to send: ${e.message}", Toast.LENGTH_SHORT).show()
+                            }
                         }
                     },
                     onBack = { navController.popBackStack() },
