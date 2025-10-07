@@ -1,0 +1,8 @@
+json_key_file("fastlane/android/github-actions-playstore-api.json")
+package_name("ssk.kidssms")
+
+# Deploy configuration
+# Valid values: 'production', 'beta', 'internal', 'alpha'
+
+# Default deploy track (can be overridden via environment variable DEPLOY_TRACK)
+ENV['DEFAULT_DEPLOY_TRACK'] ||= 'production'

@@ -1,0 +1,114 @@
+default_platform(:android)
+
+# Constants
+GRADLE_FILE = "../app/build.gradle.kts"
+AAB_PATH = "../app/build/outputs/bundle/release/app-release.aab"
+DEFAULT_TRACK = ENV['DEFAULT_DEPLOY_TRACK'] || ENV['DEPLOY_TRACK'] || 'production'
+
+# Helper methods
+def read_version_info(gradle_file)
+  UI.user_error!("Gradle file not found: #{gradle_file}") unless File.exist?(gradle_file)
+
+  version_code = 0
+  version_name = ""
+
+  File.readlines(gradle_file).each do |line|
+    if line.include?("versionCode = ")
+      version_code = line.match(/versionCode = (\d+)/)[1].to_i
+    elsif line.include?("versionName = ")
+      version_name = line.match(/versionName = "(.+)"/)[1]
+    end
+  end
+
+  UI.user_error!("Failed to read version information from #{gradle_file}") if version_code == 0 || version_name.empty?
+
+  { code: version_code, name: version_name }
+end
+
+def increment_version(version_name)
+  version_parts = version_name.split('.')
+  version_parts[-1] = (version_parts[-1].to_i + 1).to_s
+  version_parts.join('.')
+end
+
+def update_gradle_version(gradle_file, version_code, version_name)
+  content = File.read(gradle_file)
+  content.gsub!(/versionCode = \d+/, "versionCode = #{version_code}")
+  content.gsub!(/versionName = ".+"/, "versionName = \"#{version_name}\"")
+  File.write(gradle_file, content)
+end
+
+platform :android do
+  desc "Bump version and commit changes"
+  lane :bump_version do
+    current_version = read_version_info(GRADLE_FILE)
+
+    new_version_code = current_version[:code] + 1
+    new_version_name = increment_version(current_version[:name])
+
+    UI.message "Bumping version from #{current_version[:name]} (#{current_version[:code]}) to #{new_version_name} (#{new_version_code})"
+
+    update_gradle_version(GRADLE_FILE, new_version_code, new_version_name)
+
+    git_commit(
+      path: "app/build.gradle.kts",
+      message: "chore: Bump version to #{new_version_name} (#{new_version_code})"
+    )
+
+    { code: new_version_code, name: new_version_name }
+  end
+
+  desc "Build release bundle"
+  lane :build_release do
+    gradle(
+      task: "clean bundleRelease",
+      print_command: true,
+      print_command_output: true
+    )
+
+    UI.user_error!("AAB file not found at #{AAB_PATH}") unless File.exist?(AAB_PATH)
+    UI.success "AAB file successfully built at #{AAB_PATH}"
+  end
+
+  desc "Deploy to Google Play Store"
+  lane :deploy_production do |options|
+    track = options[:track] || DEFAULT_TRACK
+    aab_file = File.expand_path(AAB_PATH, __dir__)
+
+    UI.message "Deploying to '#{track}' track..."
+
+    upload_to_play_store(
+      track: track,
+      aab: aab_file,
+      skip_upload_apk: true,
+      skip_upload_metadata: true,
+      skip_upload_images: true,
+      skip_upload_screenshots: true
+    )
+
+    UI.success "Successfully deployed to '#{track}' track!"
+  end
+
+  desc "Deploy to internal track"
+  lane :deploy_internal do
+    build_release
+    deploy_production(track: 'internal')
+  end
+
+  desc "Deploy to beta track"
+  lane :deploy_beta do
+    build_release
+    deploy_production(track: 'beta')
+  end
+
+  desc "Full deployment pipeline"
+  lane :deploy_android do |options|
+    track = options[:track] || DEFAULT_TRACK
+
+    version_info = bump_version
+    build_release
+    deploy_production(track: track)
+
+    UI.success "Successfully deployed version #{version_info[:name]} (#{version_info[:code]}) to '#{track}' track! 🚀"
+  end
+end
