@@ -31,6 +31,7 @@ import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import ssk.kidssms.data.model.SmsMessage
+import ssk.kidssms.data.repository.ContactsRepository
 import ssk.kidssms.notification.SmsNotificationManager
 import ssk.kidssms.receiver.SmsReceiver
 import ssk.kidssms.ui.conversation.ConversationViewModel
@@ -50,6 +51,11 @@ fun ConversationScreen(
     var messageText by remember { mutableStateOf("") }
     val listState = rememberLazyListState()
     val context = LocalContext.current
+
+    val contactsRepository = remember { ContactsRepository(context) }
+    val displayName = remember(address) {
+        contactsRepository.getDisplayName(address)
+    }
 
     var selectedMessage by remember { mutableStateOf<SmsMessage?>(null) }
     var showBottomSheet by remember { mutableStateOf(false) }
@@ -98,6 +104,7 @@ fun ConversationScreen(
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
             } else {
+                @Suppress("UnspecifiedRegisterReceiverFlag")
                 context.registerReceiver(receiver, filter)
             }
         } catch (e: Exception) {
@@ -116,7 +123,7 @@ fun ConversationScreen(
     Scaffold(
         topBar = {
             TopAppBar(
-                title = { Text(address) },
+                title = { Text(displayName) },
                 navigationIcon = {
                     IconButton(onClick = onBackClick) {
                         Icon(Icons.AutoMirrored.Filled.ArrowBack, "Back")

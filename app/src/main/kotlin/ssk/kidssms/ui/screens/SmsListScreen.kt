@@ -25,6 +25,7 @@ import androidx.lifecycle.LifecycleEventObserver
 import androidx.lifecycle.viewmodel.compose.viewModel
 import kotlinx.coroutines.launch
 import ssk.kidssms.data.model.SmsThread
+import ssk.kidssms.data.repository.ContactsRepository
 import ssk.kidssms.receiver.SmsReceiver
 import ssk.kidssms.ui.home.HomeViewModel
 import java.text.SimpleDateFormat
@@ -84,6 +85,7 @@ fun SmsListScreen(
             if (android.os.Build.VERSION.SDK_INT >= android.os.Build.VERSION_CODES.TIRAMISU) {
                 context.registerReceiver(receiver, filter, Context.RECEIVER_NOT_EXPORTED)
             } else {
+                @Suppress("UnspecifiedRegisterReceiverFlag")
                 context.registerReceiver(receiver, filter)
             }
             android.util.Log.d("SmsListScreen", "Receiver registered successfully")
@@ -163,6 +165,12 @@ fun SmsThreadItem(
     thread: SmsThread,
     onClick: () -> Unit
 ) {
+    val context = LocalContext.current
+    val contactsRepository = remember { ContactsRepository(context) }
+    val displayName = remember(thread.address) {
+        contactsRepository.getDisplayName(thread.address)
+    }
+
     Surface(
         onClick = onClick,
         modifier = Modifier.fillMaxWidth()
@@ -177,7 +185,7 @@ fun SmsThreadItem(
                 modifier = Modifier.weight(1f)
             ) {
                 Text(
-                    text = thread.address,
+                    text = displayName,
                     style = MaterialTheme.typography.titleMedium,
                     fontWeight = FontWeight.Bold
                 )
