@@ -1,0 +1,51 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="1024" height="500" viewBox="0 0 1024 500" xmlns="http://www.w3.org/2000/svg">
+  <!-- Background gradient -->
+  <defs>
+    <linearGradient id="grad2" x1="0%" y1="0%" x2="100%" y2="100%">
+      <stop offset="0%" style="stop-color:#1976D2;stop-opacity:1" />
+      <stop offset="100%" style="stop-color:#00BCD4;stop-opacity:1" />
+    </linearGradient>
+  </defs>
+
+  <!-- Background -->
+  <rect width="1024" height="500" fill="url(#grad2)"/>
+
+  <!-- App icon (smaller version) -->
+  <circle cx="150" cy="250" r="80" fill="white" opacity="0.2"/>
+  <path d="M 150 190 L 110 205 L 110 270 Q 110 310 150 340 Q 190 310 190 270 L 190 205 Z"
+        fill="none" stroke="white" stroke-width="8" stroke-linejoin="round"/>
+  <rect x="130" y="235" width="40" height="30" rx="6" fill="white"/>
+
+  <!-- App name -->
+  <text x="270" y="220" font-family="Arial, sans-serif" font-size="72" font-weight="bold"
+        fill="white">Kids SMS</text>
+  <text x="270" y="280" font-family="Arial, sans-serif" font-size="36"
+        fill="white" opacity="0.9">Safe Messaging</text>
+
+  <!-- Features -->
+  <g transform="translate(270, 340)">
+    <!-- Shield icon -->
+    <path d="M 0 0 L -10 5 L -10 25 Q -10 35 0 42 Q 10 35 10 25 L 10 5 Z"
+          fill="white" opacity="0.8"/>
+    <text x="20" y="32" font-family="Arial, sans-serif" font-size="28"
+          fill="white" opacity="0.9">Links Blocked</text>
+  </g>
+
+  <g transform="translate(470, 340)">
+    <!-- Check mark -->
+    <circle cx="0" cy="18" r="18" fill="white" opacity="0.3"/>
+    <path d="M -6 18 L -2 24 L 8 10" fill="none" stroke="white"
+          stroke-width="4" stroke-linecap="round" opacity="0.8"/>
+    <text x="25" y="32" font-family="Arial, sans-serif" font-size="28"
+          fill="white" opacity="0.9">Kid-Safe</text>
+  </g>
+
+  <g transform="translate(630, 340)">
+    <!-- No distractions icon -->
+    <circle cx="0" cy="18" r="18" fill="#FF5252" opacity="0.8"/>
+    <rect x="-15" y="16" width="30" height="4" fill="white" transform="rotate(45 0 18)"/>
+    <text x="25" y="32" font-family="Arial, sans-serif" font-size="28"
+          fill="white" opacity="0.9">No Distractions</text>
+  </g>
+</svg>
