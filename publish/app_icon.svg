@@ -11,19 +11,11 @@
   <!-- Background -->
   <rect width="512" height="512" fill="url(#grad1)" rx="80"/>
 
-  <!-- Shield -->
-  <path d="M 256 100 L 180 130 L 180 240 Q 180 340 256 400 Q 332 340 332 240 L 332 130 Z"
-        fill="none" stroke="white" stroke-width="20" stroke-linejoin="round"/>
-
-  <!-- Message bubble inside shield -->
-  <rect x="210" y="200" width="92" height="70" rx="15" fill="white"/>
-  <polygon points="240,270 230,285 230,270" fill="white"/>
-
-  <!-- Blocked link symbol (🚫) -->
-  <circle cx="370" cy="150" r="45" fill="#FF5252"/>
-  <rect x="335" y="145" width="70" height="10" fill="white" transform="rotate(45 370 150)"/>
+  <!-- Text: KIDS -->
+  <text x="256" y="230" font-family="Arial, sans-serif" font-size="110" font-weight="bold"
+        fill="white" text-anchor="middle">KIDS</text>
 
   <!-- Text: SMS -->
-  <text x="256" y="470" font-family="Arial, sans-serif" font-size="48" font-weight="bold"
+  <text x="256" y="340" font-family="Arial, sans-serif" font-size="110" font-weight="bold"
         fill="white" text-anchor="middle">SMS</text>
 </svg>
