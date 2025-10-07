@@ -17,10 +17,15 @@ class HomeViewModel(application: Application) : AndroidViewModel(application) {
     private val _threads = MutableLiveData<List<SmsThread>>()
     val threads: LiveData<List<SmsThread>> = _threads
 
+    private val _isLoading = MutableLiveData<Boolean>(false)
+    val isLoading: LiveData<Boolean> = _isLoading
+
     fun loadThreads() {
         viewModelScope.launch(Dispatchers.IO) {
+            _isLoading.postValue(true)
             val threadList = repository.getAllThreads()
             _threads.postValue(threadList)
+            _isLoading.postValue(false)
         }
     }
 }

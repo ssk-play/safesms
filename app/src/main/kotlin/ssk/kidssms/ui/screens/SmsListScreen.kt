@@ -38,6 +38,7 @@ fun SmsListScreen(
     onNewMessageClick: () -> Unit = {}
 ) {
     val threads by viewModel.threads.observeAsState(emptyList())
+    val isLoading by viewModel.isLoading.observeAsState(false)
     val context = LocalContext.current
     val lifecycleOwner = LocalLifecycleOwner.current
 
@@ -117,27 +118,40 @@ fun SmsListScreen(
             }
         }
     ) { paddingValues ->
-        if (threads.isEmpty()) {
-            Box(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues),
-                contentAlignment = Alignment.Center
-            ) {
-                Text("No messages")
+        when {
+            isLoading -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    CircularProgressIndicator()
+                }
             }
-        } else {
-            LazyColumn(
-                modifier = Modifier
-                    .fillMaxSize()
-                    .padding(paddingValues)
-            ) {
-                items(threads) { thread ->
-                    SmsThreadItem(
-                        thread = thread,
-                        onClick = { onThreadClick(thread) }
-                    )
-                    HorizontalDivider()
+            threads.isEmpty() -> {
+                Box(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues),
+                    contentAlignment = Alignment.Center
+                ) {
+                    Text("No messages")
+                }
+            }
+            else -> {
+                LazyColumn(
+                    modifier = Modifier
+                        .fillMaxSize()
+                        .padding(paddingValues)
+                ) {
+                    items(threads) { thread ->
+                        SmsThreadItem(
+                            thread = thread,
+                            onClick = { onThreadClick(thread) }
+                        )
+                        HorizontalDivider()
+                    }
                 }
             }
         }
