@@ -6,6 +6,7 @@ import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.util.Patterns
 import android.widget.Toast
 import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
@@ -26,6 +27,7 @@ import androidx.compose.ui.Alignment
 import androidx.compose.ui.Modifier
 import androidx.compose.ui.graphics.Color
 import androidx.compose.ui.platform.LocalContext
+import androidx.compose.ui.text.style.TextOverflow
 import androidx.compose.ui.unit.dp
 import androidx.compose.ui.window.Dialog
 import androidx.lifecycle.viewmodel.compose.viewModel
@@ -62,6 +64,8 @@ fun ConversationScreen(
     val bottomSheetState = rememberModalBottomSheetState()
     var showTextSelectionDialog by remember { mutableStateOf(false) }
     var showDeleteConfirmDialog by remember { mutableStateOf(false) }
+    var showLinkSelectionDialog by remember { mutableStateOf(false) }
+    var linksToShow by remember { mutableStateOf<List<String>>(emptyList()) }
 
     LaunchedEffect(threadId, address) {
         viewModel.loadMessages(threadId)
@@ -209,6 +213,22 @@ fun ConversationScreen(
                 onDelete = { msg ->
                     showBottomSheet = false
                     showDeleteConfirmDialog = true
+                },
+                onCopyLink = { msg ->
+                    val links = extractLinks(msg.body)
+                    if (links.size == 1) {
+                        // Single link: copy directly
+                        val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                        val clip = ClipData.newPlainText("Link", links[0])
+                        clipboard.setPrimaryClip(clip)
+                        Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
+                        showBottomSheet = false
+                    } else if (links.size > 1) {
+                        // Multiple links: show selection dialog
+                        linksToShow = links
+                        showBottomSheet = false
+                        showLinkSelectionDialog = true
+                    }
                 }
             )
         }
@@ -234,6 +254,26 @@ fun ConversationScreen(
                 onDismiss = {
                     showDeleteConfirmDialog = false
                     selectedMessage = null
+                }
+            )
+        }
+
+        if (showLinkSelectionDialog && linksToShow.isNotEmpty()) {
+            LinkSelectionDialog(
+                links = linksToShow,
+                onLinkSelected = { link ->
+                    val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                    val clip = ClipData.newPlainText("Link", link)
+                    clipboard.setPrimaryClip(clip)
+                    Toast.makeText(context, "Link copied", Toast.LENGTH_SHORT).show()
+                    showLinkSelectionDialog = false
+                    selectedMessage = null
+                    linksToShow = emptyList()
+                },
+                onDismiss = {
+                    showLinkSelectionDialog = false
+                    selectedMessage = null
+                    linksToShow = emptyList()
                 }
             )
         }
@@ -305,8 +345,11 @@ fun MessageOptionsBottomSheet(
     onCopyText: (SmsMessage) -> Unit,
     onSelectText: (SmsMessage) -> Unit,
     onForward: (SmsMessage) -> Unit,
-    onDelete: (SmsMessage) -> Unit
+    onDelete: (SmsMessage) -> Unit,
+    onCopyLink: (SmsMessage) -> Unit
 ) {
+    val links = remember(message.body) { extractLinks(message.body) }
+
     ModalBottomSheet(
         onDismissRequest = onDismiss,
         sheetState = sheetState
@@ -333,6 +376,13 @@ fun MessageOptionsBottomSheet(
                 text = "텍스트 복사",
                 onClick = { onCopyText(message) }
             )
+
+            if (links.isNotEmpty()) {
+                MessageOptionItem(
+                    text = "링크 복사",
+                    onClick = { onCopyLink(message) }
+                )
+            }
 
             MessageOptionItem(
                 text = "전달",
@@ -438,4 +488,73 @@ fun DeleteConfirmDialog(
             }
         }
     )
+}
+
+@Composable
+fun LinkSelectionDialog(
+    links: List<String>,
+    onLinkSelected: (String) -> Unit,
+    onDismiss: () -> Unit
+) {
+    Dialog(onDismissRequest = onDismiss) {
+        Card(
+            modifier = Modifier
+                .fillMaxWidth()
+                .padding(16.dp),
+            shape = RoundedCornerShape(16.dp),
+        ) {
+            Column(
+                modifier = Modifier
+                    .fillMaxWidth()
+                    .padding(24.dp)
+            ) {
+                Text(
+                    text = "링크 선택",
+                    style = MaterialTheme.typography.titleLarge,
+                    modifier = Modifier.padding(bottom = 16.dp)
+                )
+
+                links.forEach { link ->
+                    Surface(
+                        onClick = { onLinkSelected(link) },
+                        modifier = Modifier.fillMaxWidth()
+                    ) {
+                        Text(
+                            text = link,
+                            style = MaterialTheme.typography.bodyMedium,
+                            modifier = Modifier.padding(vertical = 12.dp, horizontal = 8.dp),
+                            maxLines = 2,
+                            overflow = TextOverflow.Ellipsis
+                        )
+                    }
+                    if (link != links.last()) {
+                        HorizontalDivider()
+                    }
+                }
+
+                Spacer(modifier = Modifier.height(16.dp))
+
+                Row(
+                    modifier = Modifier.fillMaxWidth(),
+                    horizontalArrangement = Arrangement.End
+                ) {
+                    TextButton(onClick = onDismiss) {
+                        Text("취소")
+                    }
+                }
+            }
+        }
+    }
+}
+
+/**
+ * Extract URLs from text
+ */
+fun extractLinks(text: String): List<String> {
+    val links = mutableListOf<String>()
+    val matcher = Patterns.WEB_URL.matcher(text)
+    while (matcher.find()) {
+        matcher.group()?.let { links.add(it) }
+    }
+    return links
 }
