@@ -54,6 +54,7 @@ fun ConversationScreen(
     var showBottomSheet by remember { mutableStateOf(false) }
     val bottomSheetState = rememberModalBottomSheetState()
     var showTextSelectionDialog by remember { mutableStateOf(false) }
+    var showDeleteConfirmDialog by remember { mutableStateOf(false) }
 
     LaunchedEffect(threadId, address) {
         viewModel.loadMessages(threadId)
@@ -198,9 +199,8 @@ fun ConversationScreen(
                     showBottomSheet = false
                 },
                 onDelete = { msg ->
-                    // TODO: Implement delete
-                    Toast.makeText(context, "Delete not yet implemented", Toast.LENGTH_SHORT).show()
                     showBottomSheet = false
+                    showDeleteConfirmDialog = true
                 }
             )
         }
@@ -210,6 +210,21 @@ fun ConversationScreen(
                 message = selectedMessage!!,
                 onDismiss = {
                     showTextSelectionDialog = false
+                    selectedMessage = null
+                }
+            )
+        }
+
+        if (showDeleteConfirmDialog && selectedMessage != null) {
+            DeleteConfirmDialog(
+                onConfirm = {
+                    viewModel.deleteMessage(selectedMessage!!.id)
+                    showDeleteConfirmDialog = false
+                    selectedMessage = null
+                    Toast.makeText(context, "Message deleted", Toast.LENGTH_SHORT).show()
+                },
+                onDismiss = {
+                    showDeleteConfirmDialog = false
                     selectedMessage = null
                 }
             )
@@ -385,4 +400,34 @@ fun TextSelectionDialog(
             }
         }
     }
+}
+
+@Composable
+fun DeleteConfirmDialog(
+    onConfirm: () -> Unit,
+    onDismiss: () -> Unit
+) {
+    AlertDialog(
+        onDismissRequest = onDismiss,
+        title = {
+            Text("Delete Message")
+        },
+        text = {
+            Text("Are you sure you want to delete this message?")
+        },
+        confirmButton = {
+            TextButton(
+                onClick = onConfirm
+            ) {
+                Text("Delete")
+            }
+        },
+        dismissButton = {
+            TextButton(
+                onClick = onDismiss
+            ) {
+                Text("Cancel")
+            }
+        }
+    )
 }

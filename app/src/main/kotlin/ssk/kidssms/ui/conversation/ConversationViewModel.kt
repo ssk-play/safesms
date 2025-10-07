@@ -37,4 +37,14 @@ class ConversationViewModel(application: Application) : AndroidViewModel(applica
             }
         }
     }
+
+    fun deleteMessage(messageId: Long) {
+        viewModelScope.launch(Dispatchers.IO) {
+            val success = repository.deleteMessage(messageId)
+            if (success && currentThreadId != -1L) {
+                // Reload messages after deleting
+                loadMessages(currentThreadId)
+            }
+        }
+    }
 }

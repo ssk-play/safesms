@@ -117,4 +117,17 @@ class SmsRepository(private val context: Context) {
             false
         }
     }
+
+    fun deleteMessage(messageId: Long): Boolean {
+        return try {
+            val uri = Uri.withAppendedPath(Telephony.Sms.CONTENT_URI, messageId.toString())
+            val deletedRows = context.contentResolver.delete(uri, null, null)
+            Log.d("SmsRepository", "Deleted message: $messageId, rows affected: $deletedRows")
+            deletedRows > 0
+        } catch (e: Exception) {
+            Log.e("SmsRepository", "Failed to delete message", e)
+            e.printStackTrace()
+            false
+        }
+    }
 }
