@@ -32,4 +32,14 @@ REQUIREMENTS
 • Android 8.0 or higher
 • Must be set as default SMS app
 
-Kids SMS keeps it simple - safe messaging for children without distractions.
+THE STORY
+
+This app was born from a real parenting challenge. I use Family Link to manage my children's screen time, but SMS and phone apps must always be accessible for emergencies. However, I discovered that links in text messages could open web browsers, completely bypassing the time restrictions.
+
+When I announced I would create an SMS app that blocks all links, my daughter declared: "Dad, if you make that app, I will definitely find a way to break it!"
+
+My response: "Oh really? Let's see if you can!"
+
+This friendly challenge drives me to build the most secure link-blocking SMS app possible. If any issues are discovered, I'm committed to fixing them quickly.
+
+Kids SMS - built by a parent, tested by determined kids, made stronger every day.
