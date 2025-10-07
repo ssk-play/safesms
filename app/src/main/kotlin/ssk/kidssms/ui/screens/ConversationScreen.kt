@@ -195,14 +195,6 @@ fun ConversationScreen(
                     Toast.makeText(context, "Forward not yet implemented", Toast.LENGTH_SHORT).show()
                     showBottomSheet = false
                 },
-                onShare = { msg ->
-                    val shareIntent = Intent(Intent.ACTION_SEND).apply {
-                        type = "text/plain"
-                        putExtra(Intent.EXTRA_TEXT, msg.body)
-                    }
-                    context.startActivity(Intent.createChooser(shareIntent, "Share message"))
-                    showBottomSheet = false
-                },
                 onDelete = { msg ->
                     // TODO: Implement delete
                     Toast.makeText(context, "Delete not yet implemented", Toast.LENGTH_SHORT).show()
@@ -278,7 +270,6 @@ fun MessageOptionsBottomSheet(
     onCopyText: (SmsMessage) -> Unit,
     onSelectText: (SmsMessage) -> Unit,
     onForward: (SmsMessage) -> Unit,
-    onShare: (SmsMessage) -> Unit,
     onDelete: (SmsMessage) -> Unit
 ) {
     ModalBottomSheet(
@@ -311,11 +302,6 @@ fun MessageOptionsBottomSheet(
             MessageOptionItem(
                 text = "전달",
                 onClick = { onForward(message) }
-            )
-
-            MessageOptionItem(
-                text = "공유",
-                onClick = { onShare(message) }
             )
 
             MessageOptionItem(
