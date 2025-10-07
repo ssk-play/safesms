@@ -80,6 +80,6 @@ class SmsReceiver : BroadcastReceiver() {
     }
 
     companion object {
-        const val ACTION_SMS_RECEIVED = "ssk.safesms.SMS_RECEIVED"
+        const val ACTION_SMS_RECEIVED = "ssk.kidssms.SMS_RECEIVED"
     }
 }

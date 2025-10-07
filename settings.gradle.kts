@@ -19,5 +19,5 @@ dependencyResolutionManagement {
     }
 }
 
-rootProject.name = "SafeSms"
+rootProject.name = "KidsSms"
 include(":app")

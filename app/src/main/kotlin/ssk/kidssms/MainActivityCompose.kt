@@ -46,7 +46,7 @@ class MainActivityCompose : ComponentActivity() {
             val isDefaultSmsApp = roleManager.isRoleHeld(RoleManager.ROLE_SMS)
 
             if (isDefaultSmsApp) {
-                Toast.makeText(this, "SafeSms is now the default SMS app", Toast.LENGTH_SHORT).show()
+                Toast.makeText(this, "KidsSms is now the default SMS app", Toast.LENGTH_SHORT).show()
                 Log.d("MainActivityCompose", "Default SMS app set successfully")
             } else {
                 Toast.makeText(this, "Not set as default SMS app", Toast.LENGTH_SHORT).show()
@@ -64,7 +64,7 @@ class MainActivityCompose : ComponentActivity() {
                     modifier = Modifier.fillMaxSize(),
                     color = MaterialTheme.colorScheme.background
                 ) {
-                    SafeSmsApp(
+                    KidsSmsApp(
                         onRequestDefaultSmsApp = { requestDefaultSmsApp() },
                         onOpenSystemSettings = { openSystemSettings() }
                     )
@@ -138,13 +138,13 @@ class MainActivityCompose : ComponentActivity() {
                 Intent(Settings.ACTION_SETTINGS)
             }
             startActivity(intent)
-            Toast.makeText(this, "Please select SafeSms as your SMS app", Toast.LENGTH_LONG).show()
+            Toast.makeText(this, "Please select KidsSms as your SMS app", Toast.LENGTH_LONG).show()
         } catch (e: Exception) {
             Log.e("MainActivityCompose", "Failed to open default apps settings, trying general settings", e)
             try {
                 val intent = Intent(Settings.ACTION_SETTINGS)
                 startActivity(intent)
-                Toast.makeText(this, "Go to Settings > Default apps > SMS app and select SafeSms", Toast.LENGTH_LONG).show()
+                Toast.makeText(this, "Go to Settings > Default apps > SMS app and select KidsSms", Toast.LENGTH_LONG).show()
             } catch (e2: Exception) {
                 Log.e("MainActivityCompose", "Failed to open settings", e2)
                 Toast.makeText(this, "Unable to open settings", Toast.LENGTH_SHORT).show()
@@ -163,19 +163,19 @@ private fun isDefaultSmsApp(context: Context): Boolean {
         // Android 10+: Use RoleManager
         val roleManager = context.getSystemService(Context.ROLE_SERVICE) as? RoleManager
         val isDefault = roleManager?.isRoleHeld(RoleManager.ROLE_SMS) == true
-        android.util.Log.d("SafeSmsApp", "RoleManager check - isDefault: $isDefault")
+        android.util.Log.d("KidsSmsApp", "RoleManager check - isDefault: $isDefault")
         isDefault
     } else {
         // Android 9 and below: Use Telephony API
         val defaultSmsPackage = Telephony.Sms.getDefaultSmsPackage(context)
         val isDefault = defaultSmsPackage == context.packageName
-        android.util.Log.d("SafeSmsApp", "Telephony check - default: $defaultSmsPackage, ours: ${context.packageName}, isDefault: $isDefault")
+        android.util.Log.d("KidsSmsApp", "Telephony check - default: $defaultSmsPackage, ours: ${context.packageName}, isDefault: $isDefault")
         isDefault
     }
 }
 
 @Composable
-fun SafeSmsApp(
+fun KidsSmsApp(
     onRequestDefaultSmsApp: () -> Unit,
     onOpenSystemSettings: () -> Unit
 ) {
@@ -216,10 +216,10 @@ fun SafeSmsApp(
         }
 
         if (missingPermissions.isEmpty()) {
-            android.util.Log.d("SafeSmsApp", "All permissions already granted")
+            android.util.Log.d("KidsSmsApp", "All permissions already granted")
             permissionsGranted = true
         } else {
-            android.util.Log.d("SafeSmsApp", "Requesting ${missingPermissions.size} permissions")
+            android.util.Log.d("KidsSmsApp", "Requesting ${missingPermissions.size} permissions")
             permissionLauncher.launch(missingPermissions.toTypedArray())
         }
     }
@@ -235,7 +235,7 @@ fun SafeSmsApp(
     DisposableEffect(lifecycleOwner, permissionsGranted) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
             if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME && permissionsGranted) {
-                android.util.Log.d("SafeSmsApp", "onResume - checking default SMS app status")
+                android.util.Log.d("KidsSmsApp", "onResume - checking default SMS app status")
                 showDefaultSmsDialog = !isDefaultSmsApp(context)
             }
         }
@@ -282,7 +282,7 @@ fun SafeSmsApp(
                     verticalArrangement = Arrangement.spacedBy(16.dp)
                 ) {
                     Text(
-                        text = "SafeSms",
+                        text = "KidsSms",
                         style = MaterialTheme.typography.headlineLarge,
                         fontWeight = FontWeight.Bold,
                         color = MaterialTheme.colorScheme.onPrimaryContainer
@@ -299,7 +299,7 @@ fun SafeSmsApp(
                     Button(
                         onClick = {
                             settingClickCount++
-                            Log.d("SafeSmsApp", "User clicked 설정 button (count: $settingClickCount)")
+                            Log.d("KidsSmsApp", "User clicked 설정 button (count: $settingClickCount)")
                             onRequestDefaultSmsApp()
                         },
                         modifier = Modifier.fillMaxWidth()
@@ -311,7 +311,7 @@ fun SafeSmsApp(
                     if (settingClickCount >= 3) {
                         OutlinedButton(
                             onClick = {
-                                Log.d("SafeSmsApp", "User clicked direct settings button")
+                                Log.d("KidsSmsApp", "User clicked direct settings button")
                                 onOpenSystemSettings()
                             },
                             modifier = Modifier.fillMaxWidth()

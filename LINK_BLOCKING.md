@@ -121,9 +121,9 @@ Notifications use `NotificationCompat.MessagingStyle` which may auto-detect link
 
 ## Related Files
 
-- `app/src/main/kotlin/ssk/safesms/ui/screens/ConversationScreen.kt` - Message display
-- `app/src/main/kotlin/ssk/safesms/ui/screens/SmsListScreen.kt` - Message preview
-- `app/src/main/kotlin/ssk/safesms/notification/SmsNotificationManager.kt` - Notifications
+- `app/src/main/kotlin/ssk/kidssms/ui/screens/ConversationScreen.kt` - Message display
+- `app/src/main/kotlin/ssk/kidssms/ui/screens/SmsListScreen.kt` - Message preview
+- `app/src/main/kotlin/ssk/kidssms/notification/SmsNotificationManager.kt` - Notifications
 
 ---
 

@@ -1,4 +1,4 @@
-package ssk.safesms
+package ssk.kidssms
 
 import org.junit.Test
 

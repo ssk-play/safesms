@@ -1,2 +1,2 @@
-# safesms
-Safe SMS - Safe Messenger for Kids
+# kidssms
+Kids SMS - Safe Messenger for Kids
