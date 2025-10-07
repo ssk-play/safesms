@@ -118,7 +118,7 @@ fun SmsListScreen(
         }
     ) { paddingValues ->
         when {
-            isLoading -> {
+            isLoading && threads.isEmpty() -> {
                 Box(
                     modifier = Modifier
                         .fillMaxSize()
