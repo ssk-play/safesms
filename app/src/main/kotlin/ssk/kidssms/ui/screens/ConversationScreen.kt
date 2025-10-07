@@ -1,10 +1,15 @@
 package ssk.kidssms.ui.screens
 
 import android.content.BroadcastReceiver
+import android.content.ClipData
+import android.content.ClipboardManager
 import android.content.Context
 import android.content.Intent
 import android.content.IntentFilter
+import android.widget.Toast
+import androidx.compose.foundation.ExperimentalFoundationApi
 import androidx.compose.foundation.background
+import androidx.compose.foundation.combinedClickable
 import androidx.compose.foundation.layout.*
 import androidx.compose.foundation.lazy.LazyColumn
 import androidx.compose.foundation.lazy.items
@@ -156,9 +161,11 @@ fun ConversationScreen(
     }
 }
 
+@OptIn(ExperimentalFoundationApi::class)
 @Composable
 fun MessageItem(message: SmsMessage) {
     val isSent = message.type == SmsMessage.TYPE_SENT
+    val context = LocalContext.current
 
     Row(
         modifier = Modifier
@@ -176,7 +183,18 @@ fun MessageItem(message: SmsMessage) {
                 } else {
                     MaterialTheme.colorScheme.secondaryContainer
                 },
-                modifier = Modifier.widthIn(max = 280.dp)
+                modifier = Modifier
+                    .widthIn(max = 280.dp)
+                    .combinedClickable(
+                        onClick = { /* No action on regular click */ },
+                        onLongClick = {
+                            // Copy message to clipboard
+                            val clipboard = context.getSystemService(Context.CLIPBOARD_SERVICE) as ClipboardManager
+                            val clip = ClipData.newPlainText("SMS Message", message.body)
+                            clipboard.setPrimaryClip(clip)
+                            Toast.makeText(context, "Message copied", Toast.LENGTH_SHORT).show()
+                        }
+                    )
             ) {
                 // SAFETY FEATURE: Links are NOT clickable
                 // Compose Text does not automatically detect or activate links
