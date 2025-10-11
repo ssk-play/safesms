@@ -208,6 +208,7 @@ fun KidsSmsApp(
 ) {
     val context = LocalContext.current
     val navController = rememberNavController()
+    var isDefaultSmsAppSet by remember { mutableStateOf(false) }
     var showDefaultSmsDialog by remember { mutableStateOf(false) }
     var permissionsGranted by remember { mutableStateOf(false) }
     var settingClickCount by remember { mutableStateOf(0) }
@@ -236,34 +237,40 @@ fun KidsSmsApp(
         }
     }
 
-    // Check and request permissions on app start
+    // STEP 1: Check if default SMS app first (Play Store requirement)
     LaunchedEffect(Unit) {
-        val missingPermissions = requiredPermissions.filter {
-            context.checkSelfPermission(it) != android.content.pm.PackageManager.PERMISSION_GRANTED
-        }
-
-        if (missingPermissions.isEmpty()) {
-            android.util.Log.d("KidsSmsApp", "All permissions already granted")
-            permissionsGranted = true
-        } else {
-            android.util.Log.d("KidsSmsApp", "Requesting ${missingPermissions.size} permissions")
-            permissionLauncher.launch(missingPermissions.toTypedArray())
-        }
+        val isDefault = isDefaultSmsApp(context)
+        android.util.Log.d("KidsSmsApp", "Initial check - isDefaultSmsApp: $isDefault")
+        isDefaultSmsAppSet = isDefault
+        showDefaultSmsDialog = !isDefault
     }
 
-    // Check if default SMS app after permissions granted
-    LaunchedEffect(permissionsGranted) {
-        if (permissionsGranted) {
-            showDefaultSmsDialog = !isDefaultSmsApp(context)
+    // STEP 2: After default SMS app is set, request runtime permissions
+    LaunchedEffect(isDefaultSmsAppSet) {
+        if (isDefaultSmsAppSet) {
+            android.util.Log.d("KidsSmsApp", "Default SMS app is set, checking permissions")
+            val missingPermissions = requiredPermissions.filter {
+                context.checkSelfPermission(it) != android.content.pm.PackageManager.PERMISSION_GRANTED
+            }
+
+            if (missingPermissions.isEmpty()) {
+                android.util.Log.d("KidsSmsApp", "All permissions already granted")
+                permissionsGranted = true
+            } else {
+                android.util.Log.d("KidsSmsApp", "Requesting ${missingPermissions.size} permissions")
+                permissionLauncher.launch(missingPermissions.toTypedArray())
+            }
         }
     }
 
     // Re-check default SMS app status on resume
-    DisposableEffect(lifecycleOwner, permissionsGranted) {
+    DisposableEffect(lifecycleOwner) {
         val observer = androidx.lifecycle.LifecycleEventObserver { _, event ->
-            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME && permissionsGranted) {
-                android.util.Log.d("KidsSmsApp", "onResume - checking default SMS app status")
-                showDefaultSmsDialog = !isDefaultSmsApp(context)
+            if (event == androidx.lifecycle.Lifecycle.Event.ON_RESUME) {
+                android.util.Log.d("KidsSmsApp", "onResume - checking status")
+                val isDefault = isDefaultSmsApp(context)
+                isDefaultSmsAppSet = isDefault
+                showDefaultSmsDialog = !isDefault
             }
         }
         lifecycleOwner.lifecycle.addObserver(observer)
@@ -272,19 +279,22 @@ fun KidsSmsApp(
         }
     }
 
-    // Show loading until permissions are granted
-    if (!permissionsGranted) {
-        Box(
-            modifier = Modifier.fillMaxSize(),
-            contentAlignment = Alignment.Center
-        ) {
-            Column(horizontalAlignment = Alignment.CenterHorizontally) {
-                CircularProgressIndicator()
-                Spacer(modifier = Modifier.height(16.dp))
-                Text("Checking permissions...")
+    // Show loading until both default app and permissions are set
+    if (!isDefaultSmsAppSet || !permissionsGranted) {
+        // Skip showing loading if we're about to show the default SMS dialog
+        if (!showDefaultSmsDialog && !permissionsGranted) {
+            Box(
+                modifier = Modifier.fillMaxSize(),
+                contentAlignment = Alignment.Center
+            ) {
+                Column(horizontalAlignment = Alignment.CenterHorizontally) {
+                    CircularProgressIndicator()
+                    Spacer(modifier = Modifier.height(16.dp))
+                    Text("Initializing...")
+                }
             }
+            return
         }
-        return
     }
 
     // Show full-screen guide if not default app
